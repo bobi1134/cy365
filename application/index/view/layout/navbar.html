@@ -1,0 +1,360 @@
+<div class="nav-square">
+    <div class="container">
+        <div class="row">
+            <div class="navbar no-margin no-border" role="navigation">
+                <div class="navbar-header col-lg-2 col-md-2 col-sm-2">
+                    <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+                        <span class="sr-only"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a href="{:url('index/index/index')}" class="navbar-brand">
+                        <img height="20" src="{$logo}" onerror="this.src='/static/index/images/logo.png'" alt="{$webname}">
+                    </a>
+                </div>
+                <div class="collapse navbar-collapse navbar-responsive-collapse col-lg-10 col-md-10 col-sm-10">
+                    <ul class="nav">
+                        <li class="{if(\think\Request::instance()->controller())=="index"}active{/if} col-lg-1 col-md-1 col-sm-1">
+                            <a href="{:url('index/index/index')}" class="text-center">首  页<i></i></a>
+                        </li>
+                        <div class="col-lg-8 col-md-9 col-sm-9 no-padding">
+                            <li class="{if(\think\Request::instance()->controller())=="news"}active{/if} col-lg-2 col-md-2 col-sm-2">
+                                <a href="{:url('index/news/index')}" class="text-center">创业资讯<i></i></a>
+                            </li>
+                            <li class="{if(\think\Request::instance()->controller())=="education"}active{/if} col-lg-2 col-md-2 col-sm-2 disabled">
+                                <a href="{:url('index/education/index')}" class="text-center">创业教育<i></i></a>
+                            </li>
+                            <li class="{if(\think\Request::instance()->controller())=="service"}active{/if} col-lg-2 col-md-2 col-sm-2">
+                                <a href="{:url('index/service/index')}" class="text-center">创业服务<i></i></a>
+                            </li>
+                            <li class="{if(\think\Request::instance()->controller())=="hatch"}active{/if} col-lg-2 col-md-2 col-sm-2 disabled">
+                                <a href="{:url('index/hatch/index')}" class="text-center">创业孵化<i></i></a>
+                            </li>
+                            <li class="{if(\think\Request::instance()->controller())=="genius"}active{/if} col-lg-2 col-md-2 col-sm-2 disabled">
+                                <a href="{:url('index/genius/index')}" class="text-center">项目展示<i></i></a>
+                            </li>
+                            <li class="{if(\think\Request::instance()->controller())=="cooperate"}active{/if} col-lg-2 col-md-2 col-sm-2 disabled">
+                                <a href="{:url('index/cooperate/index')}" class="text-center">风投对接<i></i></a>
+                            </li>
+                        </div>
+                        <div class="col-lg-3 col-md-2 col-sm-2 sm-no-padding">
+                            {if(\think\Session::get('user_id')=="")}
+                            <a href="javascript:void(0);" class="text-center col-lg-2 col-lg-offset-7 col-md-4 col-md-offset-3 col-sm-5 col-sm-offset-0 col-xs-2 col-xs-offset-3" onclick="NavLogin()">登录</a>
+                            <span class="text-center col-lg-1 col-md-1 col-sm-2 col-xs-2">|</span>
+                            <a href="javascript:void(0);" class="text-center col-lg-2 col-md-4 col-sm-5 col-xs-2" onclick="NavSignUp()">注册</a>
+                            {/if}
+                            {if(\think\Session::get('user_id')!="")}
+                            <a href="{:url('user/index/index')}" class="text-center col-lg-3 col-lg-offset-6 col-md-4 col-md-offset-3 col-sm-5 col-sm-offset-0 col-xs-2 col-xs-offset-3">
+                                {:\\think\\Cookie::get('username')}</a>
+                            <span class="text-center col-lg-1 col-md-1 col-sm-2 col-xs-2">|</span>
+                            <a href="#" @click.stop.prevent="logout" class="text-center col-lg-2 col-md-4 col-sm-5 col-xs-2">退出</a>
+                            {/if}
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{if(\think\Session::get('user_id')=="")}
+<!-- 弹出登陆模态框 -->
+<script>
+    function NavLogin() {
+        $("#nav_login").modal("toggle");
+    }
+    function NavSignUp() {
+        $("#nav_signUp").modal("toggle");
+    }
+</script>
+{js href="/static/index/js/icheck.js" /}
+<div class="modal" id='nav_login'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <a href="javascript:void(0);" class="block text-center padding-10">
+                    <img height="20" src="/static/index/images/logo.svg" onerror="this.src='/static/index/images/logo.png'" alt="创业365">
+                </a>
+                <form  method="post">
+                    <input type="text" name="username" v-model="userName" class="user-one" placeholder="账户" required>
+                    <input type="password" name="passwd" v-model="password" class="user-one" placeholder="密码" required>
+                    <div class="checkbox" id="check-value">
+                        <input type="checkbox" id="square-checkbox-1" name="remember" >
+                        <label for="square-checkbox-1">记住登录状态&nbsp;&nbsp;&nbsp;{{ remember }}<span><a href="javascript:void(0);" @click.stop.prevent="forgetPsw">忘记密码？</a></span></label>
+                    </div>
+                    <input type="submit" name="submit" @click.stop.prevent="login()" class="user-submit btn-blue" value="登 录">
+                    <div class="goregist">
+                        <a href="javascript:void(0);" @click="goToSignUp()" class="block pull-right">无账户名？单击注册</a>
+                    </div>
+                </form>
+                <script>
+                    $(document).ready(function(){
+                        $('.checkbox input').iCheck({
+                            checkboxClass: 'icheckbox_square-blue',
+                            increaseArea: '10%'
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id='nav_forget'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <a href="javascript:void(0);" class="block text-center padding-10">
+                    <img height="20" src="/static/index/images/logo.svg" onerror="this.src='/static/index/images/logo.png'" alt="创业365">
+                </a>
+                <form  method="post">
+                    <input type="text" name="username" v-model="userName" class="user-one" autocomplete="off" placeholder="请输入您的账户" required>
+                    <input type="email" name="email" v-model="email" class="user-one" autocomplete="off" placeholder="请输入您的邮箱">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <input type="text" name="verify" v-model="verify" autocomplete="off" class="user-one col-md-9" placeholder="请输入验证码">
+
+                        </div>
+                        <div class="col-md-5">
+                            <button type="button" class="user-submit btn-blue" @click="getVerify">获取验证码</button>
+
+                        </div>
+                    </div>
+
+                    <input type="password" name="passwd" v-model="password" autocomplete="off" class="user-one" placeholder="请输入新密码" required>
+
+                    <input type="submit" name="submit" @click.stop.prevent="updatePasswd" class="user-submit btn-blue" value="重置密码">
+                </form>
+                <script>
+                    $(document).ready(function(){
+                        $('.checkbox input').iCheck({
+                            checkboxClass: 'icheckbox_square-blue',
+                            increaseArea: '10%'
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id='nav_signUp'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <a href="javascript:void(0);" class="block text-center padding-10">
+                    <img height="20" src="/static/index/images/logo.svg" onerror="this.src='/static/index/images/logo.png'" alt="创业365">
+                </a>
+                <form  method="post">
+                    <input type="text" name="username" v-model="userName" v-on:blur="availability()" id="inputHelpBlock" class="user-one" placeholder="账户" required aria-describedby="helpBlock">
+                    <span id="helpBlock" class="help-block" style="display: none"></span>
+                    <input type="password" name="passwd" v-model="password" class="user-one" placeholder="登录密码" required>
+                    <input type="email" name="email" v-model="email" class="user-one" placeholder="绑定邮箱" required>
+                    <input type="text" name="phone" v-model="phone" class="user-one" placeholder="联系电话" required>
+                    <input type="submit" name="submit" @click.stop.prevent="signUp()" class="user-submit btn-blue" value="注册">
+                    <div class="goregist">
+                        <a href="javascript:void(0);" @click="goToLogin()" class="block pull-right">已有账户？单击登录</a>
+                    </div>
+                </form>
+                <script>
+                    $(document).ready(function(){
+                        $('.checkbox input').iCheck({
+                            checkboxClass: 'icheckbox_square-blue',
+                            increaseArea: '10%'
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+{/if}
+<script>
+    var vm=new Vue({
+        el:"body",
+        data:{
+            userName:"",
+            password:"",
+            email:"",
+            phone:"",
+            verify:""
+        },
+        methods:{
+            login:function(){
+                var this_el=event.currentTarget;
+                var rem=$("#check-value").children("div").hasClass('checked');
+                var data={username:vm.userName,passwd:vm.password,remember:rem==true?'on':'off'};
+                $.ajax({
+                    type:"post",
+                    dataType:"json",
+                    data:data,
+                    url:"{:url('user/login/login')}",
+                    beforeSend: function () {
+                      $(this_el).val("登录中");
+                    },
+                    success:function(res){
+                        if(res.code===1){
+                            location.reload();
+                        }else{
+                            swal({
+                                title:'',
+                                text:res.msg,
+                                type:"error",
+                                closeOnConfirm:false
+                            });
+                            $(this_el).val("登 录");
+                        }
+                    }
+                })
+            },
+            signUp:function(){
+                var this_el=event.currentTarget;
+                var data={username:vm.userName,passwd:vm.password,email:vm.email,phone:vm.phone};
+                $.ajax({
+                    type:"POST",
+                    dataType:"json",
+                    data:data,
+                    url:"{:url('user/login/register')}",
+                    beforeSend:function(){
+                        $(this_el).val("正在注册中");
+                    },
+                    success:function(res) {
+                        if (res.code === 1) {
+                            swal({
+                                title:'',
+                                text:res.msg,
+                                type:"success",
+                                confirmButtonText: "好的"
+                            }, function(){
+                                location.reload();
+                            })
+                        } else {
+                            swal({
+                                title:'',
+                                text:res.msg,
+                                type:"error",
+                                closeOnConfirm:false
+                            });
+                            $(this_el).val("注册");
+                        }
+                    },
+                    error:function(){
+                        swal("系统错误");
+                    }
+                });
+            },
+            logout:function(){
+                $.getJSON({
+                    url:"{:url('user/login/logout')}",
+                    success:function(res){
+                        swal(res.msg);
+                    }
+                })
+                location.href="{:url('index/index/index')}";
+            },
+            availability:function(){
+                if(vm.userName=='')
+                    return false;
+                $.ajax({
+                    type:"POST",
+                    dataType:"json",
+                    data:{username:vm.userName},
+                    url:"{:url('user/login/availability')}",
+                    beforeSend:function(){
+                        $("#helpBlock").text("正在检查您的用户名...").removeClass('text-danger','text-success').addClass('text-muted').css({"display":"block"});
+                    },
+                    success:function(res){
+                        if(res.code==0){
+                            $("#helpBlock").text(res.msg).removeClass('text-success').addClass('text-danger').css('display','block');
+                        }else{
+                            $("#helpBlock").text(res.msg).removeClass('text-danger').addClass('text-success').css('display','block');
+                        }
+                    }
+                })
+            },
+            goToSignUp:function(){
+                $("#nav_login").modal("toggle");
+                $("#nav_signUp").modal("toggle");
+            },
+            goToLogin:function(){
+                $("#nav_signUp").modal("toggle");
+                $("#nav_login").modal("toggle");
+            },
+            forgetPsw:function(){
+                $("#nav_login").modal("toggle");
+                $("#nav_forget").modal("toggle");
+            },
+            getVerify:function(){
+                var this_el=event.currentTarget;
+                $.ajax({
+                    type:"POST",
+                    dataType:"json",
+                    data:{username:vm.userName,email:vm.email},
+                    url:"{:url('user/login/sendPasswdVerify')}",
+                    beforeSend:function(){
+                        $(this_el).text("正在发送...");
+                    },
+                    success:function(res){
+                        if(res.code==1){
+                            $(this_el).text("发送成功")
+                        }else{
+                            $(this_el).text("获取验证码");
+                            swal({
+                                title:"",
+                                text:res.msg,
+                                type:"error"
+                            })
+                        }
+                    },
+                    error:function(){
+                        swal({
+                            title:"",
+                            text:"抱歉,服务器出错了",
+                            type:"error"
+                        })
+                    }
+                })
+            },
+            updatePasswd:function(){
+                var data={username:vm.userName,new_passwd:vm.password,verify_code:vm.verify};
+                var this_el=event.currentTarget;
+                $.ajax({
+                    type:"POST",
+                    dataType:"json",
+                    data:data,
+                    url:"{:url('user/login/updatePasswd')}",
+                    beforeSend:function(){
+                        $(this_el).text("正在发送中");
+                    },
+                    success:function(res){
+                        if(res.code==1){
+                            swal({
+                                title:"",
+                                text:res.msg,
+                                type:"success"
+                            },function(){
+                                location.reload()
+                            })
+                        }else{
+                            swal({
+                                title:"",
+                                text:res.msg,
+                                type:"error"
+                            })
+                        }
+                        $(this_el).text("重置密码")
+                    },
+                    error:function(){
+                        swal({
+                            title:"",
+                            text:"抱歉,系统出错了",
+                            type:"error"
+                        })
+                    }
+                })
+            }
+        }
+    })
+</script>

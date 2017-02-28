@@ -1,0 +1,154 @@
+{extend name="layout/app" /}
+{block name="content"}
+<div class="col-md-12" id="users">
+    <section class="panel">
+        <header class="panel-heading">
+            <h4>管理员列表</h4>
+        </header>
+        <users-app>
+
+
+        </users-app>
+    </section>
+
+</div>
+<div class="modal fade" id="updateInfo" tabindex="-1" role="dialog" aria-labelledby="updateInfo" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">修改管理员信息</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    <input type="hidden" id="admin_id" name="id" value="">
+                    <div class="form-group">
+                        <label for="inputName" class="col-lg-3 control-label">管理员姓名：</label>
+                        <div class="col-lg-9">
+                            <input type="text" name="name" class="form-control" id="inputName" placeholder="请输入管理员姓名" required>
+                            <p class="help-block"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputPhone" class="col-lg-3 control-label">手机号码：</label>
+                        <div class="col-lg-9">
+                            <input type="text" name="phone" class="form-control" id="inputPhone" placeholder="请输入管理员手机号码" required>
+                            <p class="help-block"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputName" class="col-lg-3 control-label">管理员权限：</label>
+                        <div class="col-lg-9" id="vue-select">
+                            <select name="rules" class="form-control" id="rules">
+                                {foreach $group as $val}
+                                <option value="{$val.id}">{$val.title}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                </form>
+
+
+            </div>
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-default" type="button">取消</button>
+                <button class="btn btn-success" type="button" id="save">保存设置</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/x-template" id="users-template">
+    <table id="example" class="table">
+        <thead>
+        <tr class="text-center">
+            <th><input type="checkbox"></th>
+            <th>邮箱</th>
+            <th>昵称</th>
+            <th>权限</th>
+            <th>电话</th>
+            <th>状态</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr v-for="project in list">
+            <td><input type="checkbox" v-bind:value="project.id"></td>
+            <td>{{ project.email }}</td>
+            <td>{{ project.name }}</td>
+            <td>{{ project.power_id }}</td>
+            <td>{{ project.phone }}</td>
+            <td>{{ project.status }}</td>
+            <td><a @click.stop.prevent="updateInfo(project.name,project.phone,project.power_id,project.id)" href="#" class="btn btn-success btn-xs"><i class="fa fa-crops"></i> 修改</a></td>
+        </tr>
+        </tbody>
+
+    </table>
+
+</script>
+{/block}
+{block name="ext_js"}
+<script src="//cdn.bootcss.com/vue/2.0.0-alpha.1/vue.min.js"></script>
+<script>
+    Vue.component('users-app',{
+        template:"#users-template",
+        data:function(){
+            return {
+                list:[],
+                group_list:[],
+            }
+        },
+        props: {
+            list: Object,
+            group_list:Object
+
+        },
+        created:function() {
+            layer.msg("正在努力加载中...");
+            var vm = this;
+            $.getJSON("{:url('admin/user/getAllUser')}", function (res) {
+                vm.list = res;
+            });
+        },
+        methods:{
+            updateInfo:function(name,phone,power_id,id){
+                $("#inputName").val(name);
+                $("#inputPhone").val(phone);
+                $("#admin_id").val(id);
+                $("#updateInfo").modal("toggle");
+            }
+        }
+
+    });
+    var vm = new Vue({
+        el:"#users",
+
+    })
+    $("#save").click(function(){
+        var data={'admin_id':$("#admin_id").val(),'name':$("#inputName").val(),'phone':$("#inputPhone").val(),"power_id":$("#rules").val()}
+        $.ajax({
+            type:"POST",
+            dataType:"json",
+            data:data,
+            url:"{:url('admin/user/update')}",
+            beforeSend:function(){
+                layer.load(3,{time:1500});
+            },
+            success:function(res){
+                if(res.code==1){
+                    layer.msg(res.msg);
+                }else{
+                    layer.alert(res.msg);
+                }
+                location.reload();
+            },
+            error:function(){
+                layer.alert('抱歉,系统出错了');
+            }
+
+        })
+    })
+</script>
+{/block}
+

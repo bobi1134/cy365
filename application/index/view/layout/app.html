@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{block name="title"}{/block} - {$webname} - {$organization}</title>
+    <meta name="description" content="{$description}">
+    <meta name="keywords" content="{$keywords}" />
+
+    <link href="/static/index/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//cdn.bootcss.com/sweetalert/1.1.3/sweetalert.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/index/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/index/css/swiper.min.css">
+    <link rel="stylesheet" href="/static/index/css/square/_all.css">
+
+
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="/static/index/css/font-awesome-ie7.min.css">
+    <![endif]-->
+    {block name="ext_css"}{/block}  <!--扩展css样式-->
+    <link rel="stylesheet" href="/static/index/css/index.css">
+    <link rel="stylesheet" href="/static/index/css/lorin.css">
+    <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/vue/1.0.24/vue.min.js"></script>
+</head>
+<body>
+    {include file="layout/navbar" /}  <!--导航栏钩子-->
+
+    {block name="content"}{/block}    <!--主体内容钩子，自定义里面的内容-->
+
+    {include file="layout/footer" /}  <!--网站页脚钩子-->
+    <script src="/static/index/js/bootstrap.min.js"></script>
+    <script src="/static/index/js/sweetalert.min.js"></script>
+    <script src="//cdn.bootcss.com/vue/1.0.24/vue.min.js"></script>
+    {block name="ext_js"}{/block}  <!--扩展js样式-->
+</body>
+</html>

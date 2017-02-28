@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="/static/admin/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/admin/css/bootstrap-reset.css">
+    <link href="http://cdn.bootcss.com/font-awesome/4.6.2/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/admin/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/static/admin/css/style-responsive.css">
+    <link rel="stylesheet" href="/static/admin/css/layer.min.css">
+</head>
+<body>
+
+<div class="panel-group m-bot20" id="accordion">
+    <div style="margin: 10px;padding: 5px;">
+        <label for="Name">角色名称:</label>
+        <input class="form-control" style="width: 300px; display: inline-block;" id="Name" type="text" value="{$groupRules.title}"/>
+        <input type="hidden" id="admin_id" value="{$groupRules.id}">
+    </div>
+
+    {foreach $rules as $rule}
+    {if condition="$rule.pid eq 0"}
+    <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse{$rule.id}">
+                            <i class="fa fa-user"></i>
+                            {$rule.name}
+                        </a>
+
+                        <span class="pull-right"><input type="checkbox" value="{$rule.id}" class="select-all"> 全选</span>
+                    </h4>
+                </div>
+
+
+                <div id="collapse{$rule.id}" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <ul class="list-group">
+                            <input type="checkbox" style="display: none" value="{$rule.id}" class="rule-select" checked>
+                            {foreach $rules as $sub}
+                               {if condition="$sub.pid eq $rule.id"}
+
+                                    <li class="list-group-item">{$sub.name} <input type="checkbox"{in name="$sub.id" value="$res"}checked{/in} value="{$sub.id}" class="rule-select pull-right"></li>
+
+                               {/if}
+                            {/foreach}
+                        </ul>
+                    </div>
+                </div>
+
+    </div>
+    {/if}
+    {/foreach}
+</div>
+<div class="navbar navbar-fixed-bottom">
+    <div class="row">
+        <div class="text-center">
+            <a href="#" class="btn btn-info" @click.stop.prevent="updatePower()" style="width: 100px">保 存</a>
+        </div>
+    </div>
+
+</div>
+
+
+<script src="/static/admin/js/jquery.js"></script>
+<script src="/static/admin/js/jquery-1.8.3.min.js"></script>
+<script src="/static/admin/js/bootstrap.min.js"></script>
+<script src="/static/admin/js/jquery.scrollTo.min.js"></script>
+<script src="//cdn.bootcss.com/vue/2.0.0-alpha.1/vue.min.js"></script>
+<script src="/static/admin/js/layer.js"></script>
+<script>
+    var vm=new Vue({
+        el:"body",
+        data:{
+            data_id:null,
+            data_title:"",
+            data_list:[]
+        },
+        props:{
+            data_id:Number,
+            data_title:String,
+            data_list: [],
+        },
+        methods:{
+            makeData:function(){
+                vm.data_id=$("#admin_id").val();
+                vm.data_title=$("#Name").val();
+                var arr=new Array();
+                var i=0;
+                $(".rule-select").each(function(key,value){
+
+                    if(!$(this).is(":checked")){
+                        arr.splice(i,1);
+                        i=i-1;
+                    }else{
+                        arr[i]=$(this).val();
+                    }
+                    i++;
+                    if(i==0){
+                        arr[i]=0
+                    }
+                });
+                vm.data_list=arr;
+            },
+            updatePower:function(){
+                vm.makeData();
+                $.ajax({
+                    type:"POST",
+                    dataType:"json",
+                    data:{"title":vm.data_title,"id":vm.data_id,"rules":vm.data_list},
+                    url:"{:url('admin/user/updateRules')}",
+                    beforeSend:function(){
+                        layer.load();
+                    },
+                    success:function(res){
+                        layer.closeAll();
+                        if(res.code==1){
+                            layer.msg(res.msg);
+                        }else{
+                            layer.alert(res.msg);
+                        }
+                    },
+                    error:function(){
+                        layer.closeAll();
+                        layer.alert("抱歉,系统出错了");
+
+                    }
+                })
+            },
+
+        }
+    })
+    $(".select-all").on('change',function(){
+        if($(this).is(":checked")){
+            $(this).parents(".panel").find(".list-group-item").find("input:checkbox").prop("checked",true);
+        }
+        if(!$(this).is(":checked")) {
+            $(this).parents(".panel").find(".list-group-item").find("input:checkbox").prop("checked",false);
+        }
+    });
+</script>
+</body>
+</html>
+

@@ -1,0 +1,70 @@
+{extend name="layout/app"/}
+
+{block name="ext_css"}
+<link rel="stylesheet" href="/static/admin/css/select2.min.css">
+{/block}
+{block name="content"}
+<div class="col-md-12">
+    <section class="panel" id="power">
+        <header class="panel-heading">
+            <div class="row">
+                <div class="col-md-10 col-xs-6">
+                    <h4>权限管理</h4>
+                </div>
+                <div class="col-md-2 col-xs-6 text-right">
+                    <a href="#" class="btn btn-primary" @click.stop.prevent="addAuthGroup"><i class="fa fa-plus"></i> 创建角色</a>
+                </div>
+            </div>
+
+        </header>
+        <div class="panel-body">
+            <ul class="list-group">
+                {foreach $authGroup as $power}
+                <li class="list-group-item">
+                    <span class="pull-right"><a @click.stop.prevent="powerMng({$power.id})" href="#" class="text-primary"> 分配权限</a></span>
+                    {$power.title}
+                </li>
+                {/foreach}
+            </ul>
+        </div>
+    </section>
+</div>
+{/block}
+{block name="ext_js"}
+<script src="//cdn.bootcss.com/select2/4.0.3/js/select2.full.min.js"></script>
+
+<script>
+    $("#rules").select2();
+</script>
+<script>
+    new Vue({
+        el:"#power",
+        methods:{
+            powerMng:function(id){
+                layer.open({
+                    type: 2,
+                    title: '设置权限',
+                    shadeClose: true,
+                    shade: false,
+                    maxmin: true, //开启最大化最小化按钮
+                    area: ['600px', '500px'],
+                    content: '/admin/user/ruleLists?id='+id
+                });
+
+            },
+            addAuthGroup:function(){
+                layer.open({
+                    type: 2,
+                    title: '创建角色',
+                    shadeClose: true,
+                    shade: false,
+                    maxmin: true, //开启最大化最小化按钮
+                    area: ['600px', '500px'],
+                    content: '/admin/user/ruleLists'
+                });
+            }
+        }
+    })
+</script>
+
+{/block}

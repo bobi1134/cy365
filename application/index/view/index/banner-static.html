@@ -1,0 +1,38 @@
+<script>
+    $(document).ready(function() {
+        explain_middle();
+    });
+    window.onresize = function() {
+        explain_middle();
+    };
+    function explain_middle() {
+        var window_height = window.screen.availHeight;
+        $(".banner-static").css({"height":window_height * 0.8 + "px","margin-top":"50px"});
+        var banner_h = $(".swiper-wrapper").height();
+        var explain_h = $(".carousel-caption").height();
+        $(".carousel-caption").css({"margin-top":(banner_h - explain_h) / 2 + "px"});
+    }
+</script>
+<div class="swiper-container full-width-carousel nav-margin banner-static">
+    <div class="swiper-wrapper">
+        {foreach $slides as $value} 
+            <div class="swiper-slide" style="background-image:url({$value.image_url})" alt="{$value.alt}">
+                {$value.content}
+            </div>
+        {/foreach}
+    </div>
+    <div class="swiper-pagination banner-static-pagination"></div>
+    <!-- Add Arrows -->
+    <div class="swiper-button-next banner-static-next"></div>
+    <div class="swiper-button-prev banner-static-prev"></div>
+</div>
+{js href="/static/index/js/swiper.min.js" /}
+<script>
+    var galleryTop = new Swiper('.banner-static', {
+        nextButton: '.banner-static-next',
+        prevButton: '.banner-static-prev',
+        pagination: '.banner-static-pagination',
+        paginationClickable: true,
+        loop: false
+    });
+</script>

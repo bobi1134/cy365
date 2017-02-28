@@ -1,0 +1,330 @@
+{extend name="layout/app"/}
+
+{block name="content"}
+<div class="col-md-12" id="menus">
+    <section class="panel" >
+
+        <header class="panel-heading">
+            <div class="row">
+                <div class="col-md-2">
+                    <h4>后台菜单列表</h4>
+                </div>
+                <div class="col-md-10">
+                    <h4><a href="#" class="btn btn-info btn-xs pull-right" @click.stop.prevent="addMenu">添加菜单</a></h4>
+                </div>
+            </div>
+        </header>
+        <menu-app>
+
+
+        </menu-app>
+    </section>
+    <div class="modal fade" id="menuModal" tabindex="-1" role="dialog" aria-labelledby="menuModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" @click="reload" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">添加菜单</h4>
+                </div>
+                <div class="modal-body">
+                    <section class="panel">
+                        <div class="panel-body">
+                            <form class="form-horizontal" role="form">
+                                <div class="form-group">
+                                    <label for="inputMenuName" class="col-lg-2 control-label">菜单名</label>
+                                    <div class="col-lg-10">
+                                        <input type="text" v-model="menu_name"  class="form-control" id="inputMenuName" placeholder="请输入菜单名">
+                                        <p class="help-block"></p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputMenuAction" class="col-lg-2 control-label">行为</label>
+                                    <div class="col-lg-10">
+                                        <input type="text" v-model="menu_action"  class="form-control" id="inputMenuAction" placeholder="请输入菜单行为">
+                                        <p class="help-block"></p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputMenuPid" class="col-lg-2 control-label">父级菜单</label>
+                                    <div class="col-lg-10">
+                                        <select id="inputMenuPid" v-model="menu_pid" class="form-control" placeholder="请选择父级菜单">
+                                            <option v-bind:value="0" selected>一级菜单</option>
+                                            <option v-for="option in option_list" v-bind:value="option.id">{{ option.name }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inputMenuMenu" class="col-lg-2 control-label">是否菜单</label>
+                                    <div class="col-lg-10">
+                                        <select id="inputMenuMenu" v-model="menu_menu" class="form-control"  placeholder="请选择是否为菜单">
+                                            <option v-bind:value="1" selected>是</option>
+                                            <option v-bind:value="0">否</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inputMenuEnabled" class="col-lg-2 control-label">是否可用</label>
+                                    <div class="col-lg-10">
+                                        <select id="inputMenuEnabled" v-model="menu_enabled" class="form-control"  placeholder="请选择是否可用">
+                                            <option v-bind:value="1" selected>可用</option>
+                                            <option v-bind:value="0">不可用</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </section>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button data-dismiss="modal" @click="reload" class="btn btn-default" type="button">取消</button>
+                    <button class="btn btn-success" @click.stop.prevent="addMenuConfirm" type="button">添加菜单</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" @click="reload" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">修改菜单属性</h4>
+                </div>
+                <div class="modal-body">
+                    <section class="panel">
+                        <div class="panel-body">
+                            <form class="form-horizontal" role="form">
+                                <div class="form-group">
+                                    <label for="inputMenuName" class="col-lg-2 control-label">菜单名</label>
+                                    <div class="col-lg-10">
+                                        <input type="text" v-model="menu_name" v-bind:value="menu_name" class="form-control" id="inputMenuName" placeholder="请输入菜单名">
+                                        <p class="help-block"></p>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inputMenuAction" class="col-lg-2 control-label">行为</label>
+                                    <div class="col-lg-10">
+                                        <input type="text" v-model="menu_action"  v-bind:value="menu_action" class="form-control" id="inputMenuAction" placeholder="请输入菜单行为">
+                                        <p class="help-block"></p>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inputMenuPid" class="col-lg-2 control-label">父级菜单</label>
+                                    <div class="col-lg-10">
+                                        <select id="inputMenuPid" v-model="menu_pid" v-bind:value="menu_pid" class="form-control" placeholder="请选择父级菜单">
+                                            <option v-bind:value="0" selected>一级菜单</option>
+                                            <option v-for="option in option_list" v-bind:value="option.id">{{ option.name }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inputMenuMenu" class="col-lg-2 control-label">是否菜单</label>
+                                    <div class="col-lg-10">
+                                        <select id="inputMenuMenu" v-model="menu_menu" v-bind:value="menu_menu" class="form-control"  placeholder="请选择是否为菜单">
+                                            <option v-bind:value="1" selected>是</option>
+                                            <option v-bind:value="0">否</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inputMenuEnabled" class="col-lg-2 control-label">是否可用</label>
+                                    <div class="col-lg-10">
+                                        <select id="inputMenuEnabled" v-model="menu_enabled" v-bind:value="menu_enabled" class="form-control"  placeholder="请选择是否可用">
+                                            <option v-bind:value="1" selected>可用</option>
+                                            <option v-bind:value="0">不可用</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </section>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-default" @click="reload" type="button">取消</button>
+                    <button class="btn btn-success" @click.stop.prevent="updateMenuConfirm" type="button">修改菜单</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script type="text/x-template" id="menus-template">
+
+    <table id="example" class="table">
+        <thead>
+        <tr class="text-center">
+            <th><input type="checkbox"></th>
+            <th>菜单名</th>
+            <th>行为</th>
+            <th>是否菜单</th>
+            <th>可用</th>
+            <th>父级菜单</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr v-for="menu in list">
+            <td><input type="checkbox" v-bind:value="menu.id"></td>
+            <td>{{ menu.name }}</td>
+            <td>{{ menu.action }}</td>
+            <td>{{ menu.menu==0?"否":"是" }}</td>
+            <td>{{ menu.enabled==1?"可用":"不可用" }}</td>
+            <td>{{ menu.pid_text }}</td>
+            <td>
+                <a @click.stop.prevent="updateMenu(menu.id,menu.name,menu.action,menu.menu,menu.enabled,menu.pid)" href="#" class="btn btn-success btn-xs">修改</a>
+                <a href="#" @click.stop.prevent="deleteMenu(menu.id)" class="btn btn-danger btn-xs">删除</a>
+            </td>
+        </tr>
+        </tbody>
+
+    </table>
+
+</script>
+{/block}
+{block name="ext_js"}
+<script>
+    Vue.component('menu-app',{
+        template:"#menus-template",
+        props: {
+            list: Object,
+            option_list:Object
+        },
+        created:function() {
+            layer.msg("正在努力加载中...");
+            var vm = this;
+            $.getJSON("{:url('admin/rule/getAllMenu')}", function (res) {
+                vm.list = res;
+            });
+        },
+        methods:{
+            updateMenu:function(id,name,action,menu,enabled,pid){
+                $.getJSON("{:url('admin/rule/getAllMenu')}", function (res) {
+                    vm.option_list = res;
+                });
+                vm.menu_id=id;
+                vm.menu_name=name;
+                vm.menu_action=action;
+                vm.menu_menu=menu;
+                vm.menu_enabled=enabled;
+                vm.menu_pid=pid;
+
+               $("#updateModal").modal('toggle');
+            },
+            deleteMenu:function(id){
+                $.ajax({
+                    url:"{:url('admin/rule/deleteRule')}",
+                    data:{id:id},
+                    type:"POST",
+                    dataType:"json",
+                    beforeSend:function(){
+                      layer.load(1,{time:1500});
+                    },
+                    success:function(res) {
+                        if (res.code == 1) {
+                            layer.msg(res.msg, function () {
+                                location.reload();
+                            });
+                        } else {
+                            layer.alert(res.msg);
+                        }
+                    },
+                    error:function(){
+                        layer.alert("抱歉,系统出错了!")
+                    }
+                });
+            }
+
+        }
+    });
+ var vm= new Vue({
+         el:"#menus",
+         data:{
+             option_list:[],
+             menu_name:"",
+             menu_action:"",
+             menu_pid:0,
+             menu_menu:1,
+             menu_enabled:1
+         },
+         props:{
+             list:Object,
+         },
+         methods:{
+             addMenu:function(){
+                 $.getJSON("{:url('admin/rule/getAllMenu')}", function (res) {
+                     vm.option_list=res;
+                     $("#menuModal").modal('toggle');
+                 });
+
+             },
+             addMenuConfirm:function(){
+                 var data={name:vm.menu_name,action:vm.menu_action,enabled:vm.menu_enabled,menu:vm.menu_menu,pid:vm.menu_pid};
+                 $.ajax({
+                     type:"POST",
+                     dataType:"json",
+                     data:data,
+                     url:"{:url('admin/rule/addMenu')}",
+                     beforeSend:function(){
+                         layer.load(4,{time:1500});
+                     },
+                     success:function(res){
+                         if(res.code==1){
+                             layer.msg(res.msg, function () {
+                                 location.reload();
+                             });
+                         }else{
+                             layer.alert(res.msg,function(){
+                                 location.reload();
+                             })
+                         }
+                     },
+                     error:function(){
+                         layer.alert("抱歉,系统出错了");
+                     }
+                 })
+             },
+             updateMenuConfirm:function(){
+                 var data={id:vm.menu_id,name:vm.menu_name,action:vm.menu_action,enabled:vm.menu_enabled,menu:vm.menu_menu,pid:vm.menu_pid};
+                 $.ajax({
+                     type:"POST",
+                     dataType:"json",
+                     data:data,
+                     url:"{:url('admin/rule/updateMenu')}",
+                     beforeSend:function(){
+                         layer.load(4,{time:1500});
+                     },
+                     success:function(res){
+                         if(res.code==1){
+                             layer.msg(res.msg, function () {
+                                 location.reload();
+                             });
+                         }else{
+                             layer.alert(res.msg,function(){
+                                 location.reload();
+                             })
+                         }
+                     },
+                     error:function(){
+                         layer.alert("抱歉,系统出错了");
+                     }
+                 })
+             },
+             reload:function(){
+                 location.reload();
+             }
+
+         }
+    })
+</script>
+{/block}

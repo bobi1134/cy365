@@ -1,0 +1,82 @@
+<div class="mail-box">
+    <aside class="sm-side">
+        <div class="user-head">
+            <a href="javascript:;" class="inbox-avatar">
+                <img src="/static/index/images/avatar.jpg" width="60px" alt="">
+            </a>
+            <div class="user-name">
+                <h5><a href="#">{:\\Think\\Cookie::get('username')}</a></h5>
+                <span><a href="#">{:\\Think\\Cookie::get('email')}</a></span>
+            </div>
+            <a href="javascript:;" class="mail-dropdown pull-right">
+                <i class="icon-chevron-down"></i>
+            </a>
+        </div>
+
+        <ul class="inbox-nav inbox-divider" style="background-color: #fff;">
+            <li {if condition="request()->action() eq 'index'"}class="active"{/if}>
+                <a href="{:url('user/index/index')}"><i class="icon-user"></i> 个人资料</a>
+            </li>
+            <li {if condition="request()->action() eq 'auth'"}class="active"{/if}>
+                <a href="{:url('user/index/auth')}"><i class="icon-check"></i> 实名认证 </a>
+
+            </li>
+            <li {if condition="request()->action() eq 'bank'"}class="active"{/if}>
+            <a href="{:url('user/index/bank')}"><i class="icon-credit-card"></i> 绑定银行卡 </a>
+
+            </li>
+            <li {if condition="request()->action() eq 'notice'"}class="active"{/if} id="count">
+                <a href="{:url('user/index/notice')}"><i class="icon-comments"></i> 最新消息 <span v-show="msgCount>0" class="label label-danger pull-right">{{ msgCount }}</span></a>
+            </li>
+            <li {if condition="request()->action() eq 'password'"}class="active"{/if}>
+                <a href="{:url('user/index/password')}"><i class="icon-cogs"></i> 修改密码</a>
+            </li>
+            <li>
+                <a href="#" @click.stop.prevent="logout"><i class="icon-remove"></i> 退出登录</a>
+            </li>
+        </ul>
+        <ul class="nav nav-pills nav-stacked labels-info inbox-divider" style="background-color: #fff">
+            <li> <h4>创业服务</h4> </li>
+            <li {if condition="request()->action() eq 'cybtlist'"}class="active"{/if}>
+                <a href="{:url('user/index/cybtList')}"> <i class="icon-tags text-orange"></i> 创业补贴 </a>
+            </li>
+            <li >
+                <a href="#" class="btn disabled"> <i class="icon-tags text-danger"></i> 创业基金 </a>
+            </li>
+            <li>
+                <a href="#" class="btn disabled"> <i class="icon-tags text-info"></i> 苗子工程 </a>
+            </li>
+            <li>
+                <a href="#" class="btn disabled"> <i class="icon-tags text-success"></i> 创业训练计划 </a>
+            </li>
+            <li>
+                <a href="#" class="btn disabled"> <i class="icon-tags text-warning"></i> 孵化园入驻 </a>
+            </li>
+        </ul>
+        <ul class="nav nav-pills nav-stacked labels-info" style="background-color: #fff">
+            <li> <h4>SYB创业培训</h4> </li>
+            <li> <a href="#" class="btn disabled"> <i class=" icon-sign-blank text-danger"></i> 培训报名 </a> </li>
+            <li> <a href="#" class="btn disabled" > <i class=" icon-sign-blank text-success"></i> 证书下载 </a> </li>
+        </ul>
+
+
+    </aside>
+</div>
+
+<script>
+    new Vue({
+        el:"#count",
+        data:{
+            msgCount:""
+        },
+        created:function(){
+            var vm= this;
+            $.getJSON("{:url('user/msg/getNewMsgCount')}",function(res){
+                if(res.code==1){
+                    vm.msgCount=res.data.count;
+                    console.log(vm.msgCount)
+                }
+            });
+        }
+    })
+</script>

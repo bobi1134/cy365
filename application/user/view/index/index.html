@@ -1,0 +1,99 @@
+{extend name="layout/app" /}
+{block name="title"}{$user.username}{/block}
+{block name="content"}
+<section class="panel">
+    <div class="bio-graph-heading">
+        <h1>个人资料</h1>
+    </div>
+
+    <div class="panel-body bio-graph-info" id="user-info">
+        <user-info>
+
+        </user-info>
+    </div>
+</section>
+<script type="text/x-template" id="userinfo-template">
+    <div class="row">
+        <div class="bio-row">
+            <h4><span class="text-orange">账户</span>: {{ list.username }}</h4>
+        </div>
+        <div class="bio-row">
+            <h4><span class="text-orange">姓名</span>: {{ list.realname==null?"未认证":list.realname }}</h4>
+        </div>
+        <div class="bio-row">
+            <h4><span class="text-orange">学号</span>: {{ list.std_id==null?"未填写":list.std_id }}</h4>
+        </div>
+        <div class="bio-row">
+            <h4><span class="text-orange">学院</span>: {{ list.academy==null?"未选择":list.academy }}</h4>
+        </div>
+        <div class="bio-row">
+            <h4><span class="text-orange">专业</span>: {{ list.major==null?"未选择":list.major }}</h4>
+        </div>
+        <div class="bio-row">
+            <h4><span class="text-orange">班级</span>: {{ list.class==null?"未选择":list.class }}</h4>
+        </div>
+        <div class="bio-row">
+            <h4><span class="text-orange">实名认证</span>:
+
+                <a href="{:url('user/index/auth')}" class='icon-ban-circle text-danger' v-if="list.auth_status == 0">未认证</a>
+
+
+                <a href="{:url('user/index/auth')}" class="icon-info-sign text-warning" v-if="list.auth_status == 1">审核中</a>
+
+
+                <a href="{:url('user/index/auth')}" class="icon-check text-success" v-if="list.auth_status == 2">已认证</a>
+
+            </h4>
+        </div>
+        <div class="bio-row">
+            <h4><span class="text-orange">绑定银行卡</span>:
+                <a href="{:url('user/index/bank')}" class='icon-ban-circle text-danger' v-if="list.bank_name == null">未绑定</a>
+                <a href="{:url('user/index/bank')}" class='icon-check text-success' v-if="list.bank_name != null">{{ list.bank_name }}</a>
+            </h4>
+        </div>
+        <div class="bio-row">
+            <h4><span class="text-orange">Email</span>: {{ list.email }}</h4>
+        </div>
+        <div class="bio-row">
+            <h4><span class="text-orange">联系电话</span>: {{ list.phone }}</h4>
+        </div>
+        <div class="inbox-body col-md-4 col-md-offset-4" style="background-color: #fff;">
+            <a class="btn btn-compose" href="{:url('user/index/edit')}">
+                修改资料
+            </a>
+            <!-- Modal -->
+        </div>
+
+    </div>
+</script>
+{/block}
+
+{block name="ext_js"}
+<script>
+    Vue.component('user-info',{
+        template:"#userinfo-template",
+        data:function(){
+            return {
+                list:[],
+            }
+        },
+        props: {
+            list: Object,
+        },
+        created:function() {
+            var vm = this;
+            $.getJSON("{:url('user/account/getUserInfo')}", function (res) {
+
+                if(res.code==1){
+                    vm.list = res.data;
+                }
+            });
+        }
+
+    });
+    var user_info = new Vue({
+        el:"#user-info",
+    })
+</script>
+{/block}
+

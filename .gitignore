@@ -1,0 +1,8 @@
+.idea
+composer.lock
+*.log
+runtime/temp/f46bf026d44a9d7279aead075c6b30f4.php
+
+/vendor
+/runtime/temp
+/public/uploads

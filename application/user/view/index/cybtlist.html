@@ -1,0 +1,182 @@
+{extend name="layout/app" /}
+{block name="title"}创业补贴 - {/block}
+{block name="content"}
+<section class="panel">
+    <project-app>
+    </project-app>
+</section>
+
+<script type="text/x-template" id="project-template">
+    <div class="modal fade in" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 class="modal-title">{{ info.main.projects_name }}</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p>项目名称：<span class="text-muted">{{ info.main.projects_name }}</span></p>
+                            <p> 负责人：<span class="text-muted">{{ info.user.realname }}</span></p>
+                            <p>  状态：<span class="text-muted">{{ info.main.status_text }}</span></p>
+                            <p>项目计划书：<a class="text-info" href="{:url('file/get/getSrcFile')}?id={{ info.main.file_id_1 }}">点击下载</a></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p>项目类型：<span class="text-muted">{{ info.main.type_text }}</span></p>
+                            <p>团队人数：<span class="text-muted">{{ info.main.members }}</span></p>
+                            <p>提交时间：<span class="text-muted">{{ info.main.submit_time }}</span></p>
+                            <p>创业申报表：<a class="text-info" href="{:url('file/get/getSrcFile')}?id={{ info.main.file_id_2 }}">点击下载</a></p>
+                        </div>
+
+                    </div>
+                </div>
+                <hr class="divider"/>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p>  初审人：<span class="text-muted">{{ info.admin.name }}</span></p>
+                            <p>   邮箱：<span class="text-muted">{{ info.admin.email }}</span></p>
+                            <p>手机号码：<span class="text-muted">{{ info.admin.phone }}</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p>初审结果：<span class="text-muted">{{ info.review.result_text }}</span></p>
+                            <p>审核意见：<span class="text-muted">{{ info.review.note==null?"无":info.review.note }}</span></p>
+                            <p>审核时间：<span class="text-muted">{{ info.review.finish_time }}</span></p>
+                        </div>
+
+                    </div>
+                </div>
+                <hr class="divider"/>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p>复审地点：<span class="text-muted">{{ info.recheck.address }}</span></p>
+                            <p>复审时间：<span class="text-muted">{{ info.recheck.date }}</span></p>
+                            <p>  复审人：<span class="text-muted">{{ info.recheck.user }}</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p>复审结果：<span class="text-muted">{{ info.recheck.result_text }}</span></p>
+                            <p>审核意见：<span class="text-muted">{{ info.recheck.note==null?"无":info.recheck.note }}</span></p>
+                            <p>审核时间：<span class="text-muted">{{ info.recheck.finish_time }}</span></p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-danger" type="button">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <header class="panel-heading">
+        <h3>项目列表 - <a href="#" @click.stop.prevent="addProject()" class="btn btn-danger" >新增项目</a></h3>
+    </header>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>项目名称</th>
+            <th>申报时间</th>
+            <th>项目进度</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="project in list">
+            <td>{{ project.projects_name }}</td>
+            <td>{{ project.submit_time }}</td>
+            <td>
+                {{ project.status==0?"填报中":project.status==1?"填报完成":project.status==2?"初审":project.status==3?"复审":"完成" }}
+            </td>
+            <td>
+                <a href="#" @click.stop.prevent="preview()" data-id="{{ project.id }}" class="text-primary" v-if="project.status!=0">查看资料</a>
+                <a href="{{ url }}" class="text-danger" v-if="project.status==0" @click.stop.prevent="continue()">继续填写</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+
+</script>
+
+{/block}
+
+{block name="ext_js"}
+<script>
+    Vue.component('project-app',{
+        template:"#project-template",
+        data:function(){
+            return {
+                list:[],
+                url:"",
+                info:[]
+            }
+        },
+        props: {
+            list: Object,
+            info: Object
+        },
+        created:function() {
+            var vm = this;
+            $.getJSON("{:url('user/service/cybtGetList')}", function (res) {
+
+                if(res.code==1){
+                    vm.list = res.data;
+                    vm.url = res.url;
+                }else{
+                    alert("服务器出错啦！");
+                }
+            });
+        },
+        methods:{
+            continue:function(){
+                var this_el=event.currentTarget;
+                var url=$(this_el).attr('href');
+                $.getJSON(url,function(res){
+                    location.href=res.url;
+                })
+            },
+            preview:function(){
+                var vm = this;
+                var this_el=event.currentTarget;
+                var id=$(this_el).attr('data-id');
+                $.ajax({
+                    type:"POST",
+                    dataType:"json",
+                    data:{id:id},
+                    url:"{:url('user/service/cybtGetInfoById')}",
+                    success:function(res){
+                        /*console.log(res.data);
+                        return false;*/
+                        vm.info=res.data;
+
+                        $("#infoModal").modal('toggle');
+                    }
+                })
+            },
+            addProject:function(){
+                $.getJSON("{:url('index/service/cybtGetIdTapped')}",function(res){
+                    if(res.code==0){
+                        swal({
+                            title:"",
+                            text:res.msg,
+                            type:"error",
+                        },function(){
+                            location.href=res.url;
+                        })
+                    }else{
+                        location.href=res.url;
+                    }
+                });
+            }
+        }
+    });
+
+    new Vue({
+        el:"body",
+    })
+
+</script>
+{/block}

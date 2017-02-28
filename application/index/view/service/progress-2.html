@@ -1,0 +1,246 @@
+{extend name="layout/app" /}
+
+{block name="title"}创业服务{/block}
+
+{block name="ext_css"}
+<link href="//cdn.bootcss.com/sweetalert/1.1.3/sweetalert.min.css" rel="stylesheet">
+<link href="//cdn.bootcss.com/semantic-ui/1.12.3/semantic.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/static/index/css/style.css" />
+{/block}
+
+{block name="content"}
+
+<div class="jumbotron jumbotron-custom">
+    <p class="text-info text-center jumbotron-title">创业补贴申报系统</p>
+</div>
+<div class="container service-main-content">
+    <div class="row service-container">
+        {include file="service/service-head"}
+        <div class="service-body" id="service-type">
+            <div class="col-md-12 col-xs-12">
+                <p class="type-title" style="padding-bottom: 0">提交资料步骤：</p>
+            </div>
+
+            <div class="col-md-12">
+                <div class="ui list">
+                    <div class="item item-notice">
+                        （1）点击下载 <a href="/static/index/files/创业项目计划书.doc"><span class="text-orange">"项目计划书模板"</span></a> 及 <a href="/static/index/files/创业补贴申报表.docx"><span class="text-orange">"在校大学生（高校毕业生）创业补贴申报表"</span></a>
+                         ，并按要求填写。
+                    </div>
+                    <div class="item item-notice">
+                        （2）您可以选择 "<span class="text-blue">复制、粘贴原文</span>" 或 "<span class="text-blue">直接上传文档</span>"
+                         任意一种方式提交您的项目计划书。
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="select-upload-type">
+                    <div class="ui top attached tabular menu">
+                        <div class="row">
+                            <a href="#" class="item active col-md-6" data-tab="upload">上传文档</a>
+                            <a href="#" class="item col-md-6" data-tab="pasted">粘贴文本</a>
+                        </div>
+
+                    </div>
+                    <div class="ui bottom attached tab segment active" data-tab="upload">
+                        <form action="{:url('file/upload/uploadFile')}" enctype="multipart/form-data" class="ui form" method="post">
+                            <div class="fields">
+                                <div class="eight wide field">
+                                    <input class="input-lg upload-input" type="text" placeholder="此处显示文件名" value="{$cybt.file1}" />
+                                    <input type="hidden" name="uid" value="{:\\think\\Session::get('uid')}">
+                                    <input type="hidden" class="type_id" value="1">
+                                </div>
+                                <div class="three wide field" style="position: relative;">
+                                    <button type="button" class="big ui basic button upload-button" @click="select_file_1()">选择文件</button>
+                                    <input type="file" name="file" id="select-file-1" class="select-file">
+                                </div>
+                                <div class="four wide field">
+                                    <div class="notice-segment">
+                                        <p class="upload-notice-text">文件正在上传...</p>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </form>
+                        <div class="segment-notice">
+                            <p>支持格式： Word文件(.doc .docx)、PDF文件(.pdf)。</p>
+                            <p>项目计划书应按照模板格式进行填写，计划书中应包含最近3月财务运营情况。</p>
+                            <p>命名以 “姓名-学号-学院-项目名称” 命名，例如： “罗小白-20100000-机电学院-创业365项目计划书” 。</p>
+                            <p>上传文件功能不支持ie9浏览器，若要上传文件请使用其他浏览器。</p>
+                        </div>
+                    </div>
+                    <div class="ui bottom attached tab segment" id="pasted-content" data-tab="pasted">
+                        <textarea id="editor_id" name="content" style="width: 100%;"></textarea>
+                        <div class="col-md-12">
+                            <div class="text-center" style="margin-top: 20px;">
+                                <a href="#" id="upload-text" class="btn btn-submit" style="color: #fff;">上传内容</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-12">
+                <div class="ui list">
+                    <div class="item item-notice">
+                        （3）上传 "在校大学生（高校毕业生）创业补贴申报表" 。
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="select-upload-type">
+                    <form action="{:url('file/upload/uploadFile')}" enctype="multipart/form-data" class="ui form" method="post">
+                        <div class="fields">
+                            <div class="eight wide field">
+                                <input class="input-lg upload-input" type="text" placeholder="此处显示文件名"  value="{$cybt.file2}" />
+                                <input type="hidden" name="uid" value="{:\\think\\Session::get('uid')}">
+                                <input type="hidden" class="type_id" value="2">
+                            </div>
+                            <div class="three wide field" style="position: relative;">
+                                <button type="button" class="big ui basic button upload-button" id="select-file-2">选择文件</button>
+                                <input type="file" name="file" id="upload-file-2" class="select-file">
+                            </div>
+                            <div class="four wide field">
+                                <div class="notice-segment">
+                                    <p class="upload-notice-text">文件正在上传...</p>
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
+                    <div class="segment-notice">
+                        <p>支持格式： Word文件(.doc .docx)、PDF文件(.pdf)。</p>
+                        <p>上传文件功能不支持ie9浏览器，若要上传文件请使用其他浏览器。</p>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="col-md-3 col-md-offset-3">
+                    <a href="{:url('index/service/cybtProgress',['id'=>\\Think\\Request::instance()->param('id'),'progress'=>1])}" class="btn btn-block btn-submit">上一步，选择申报类型</a>
+                </div>
+                <div class="col-md-3">
+                    <a href="{:url('index/service/cybtProgress',['id'=>$_GET['id'],'progress'=>3])}" class="btn btn-block btn-submit">下一步，上传证件扫描件</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="ext_js"}
+<!-- 解决移动端单击300ms延迟问题 -->
+<script type='application/javascript' src='/static/index/js/fastclick.js'></script>
+<script src="//cdn.bootcss.com/sweetalert/1.1.3/sweetalert.min.js"></script>
+<script src="//cdn.bootcss.com/semantic-ui/1.12.3/semantic.min.js"></script>
+<script src="//cdn.bootcss.com/jquery.form/3.51/jquery.form.min.js"></script>
+<script src="/static/index/js/editor/kindeditor-all-min.js"></script>
+<script>
+    $(function() {
+        FastClick.attach(document.body);
+    });
+</script>
+<script>
+    $(document).ready(function(){
+        $('.menu .item').tab();
+        $('.icon.button').popup();
+
+        $(".select-file").on('change',function(){
+                var file=$(this);
+                var form=$(this).parents('form');
+                form.find(".upload-input").val(file.val());
+                var type_id=form.find(".type_id").val();
+                form.ajaxSubmit({
+                    url:'{:url("file/upload/uploadFile")}',
+                    beforeSubmit:  function(){
+                        form.find(".notice-segment").show();
+                    },  //提交前处理
+                    success:function(res){
+                        $.ajax({
+                            type:"POST",
+                            dataType:"json",
+                            data:{id:"{:$_GET['id']}",file_id:res.data.id,file_type:type_id},
+                            url:"{:url('index/service/cybtFileTapped')}",
+                            success:function(msg){
+                                if(msg.code){
+                                    form.find("p.upload-notice-text").text("文件上传成功");
+                                    form.find("[name='notice-icon']")
+                                            .removeClass("notched circle loading icon");
+                                    $(".btn-submit").attr('href',msg.url).removeClass("ui loading disabled button");
+                                }else{
+                                    form.find("p").text("文件上传失败");
+                                }
+                            }
+                        })
+
+                    },
+                    error:function(){
+                        form.find(".upload-notice-text").text("服务器出错啦");
+                    },
+                    resetForm: false,
+                    dataType:  'json'
+                });
+                return false;
+            });
+        KindEditor.ready(function(K) {
+            var options = {
+                filterMode : true,
+                uploadJson : "{:url('file/upload/uploadImage')}",
+                fileManagerJson : "{:url('file/upload/uploadImage')}",
+                allowFileManager : true
+            };
+            var editor = K.create('textarea[name="content"]', options);
+            $("#upload-text").click(function(){
+                editor.sync();
+                html = K('#editor_id').val();
+                $.ajax({
+                    type:"POST",
+                    dataType:"json",
+                    data:{"text":html},
+                    url:"{:url('file/upload/uploadHtml')}",
+                    success:function(res){
+                       if(1===res.code){
+                           $.ajax({
+                               type:"POST",
+                               dataType:"json",
+                               data:{id:"{:$_GET['id']}",file_id:res.data.id,file_type:1},
+                               url:"{:url('index/service/cybtFileTapped')}",
+                               success:function(msg){
+                                   if(msg.code===1){
+                                       swal("","文件上传成功！","success");
+                                   }else{
+                                       swal("","文件上传失败!","error");
+                                   }
+                               },
+                               error:function(){
+                                   alert("系统出错啦!");
+                               }
+                           })
+                       }else{
+                           swal("","文件上传失败","error");
+                       }
+                    },
+                    error:function(message){
+                        alert("系统出错啦！");
+                    }
+                })
+            })
+        });
+        $("#select-file-2").click(function(){
+            $("#upload-file-2").click();
+        })
+    })
+
+    new Vue({
+        el:".select-upload-type",
+        methods:{
+            select_file_1:function (){
+                $("#select-file-1").click();
+            }
+        }
+    })
+</script>
+<script src="http://connect.qq.com/widget/loader/loader.js" widget="shareqq" charset="utf-8"></script>
+{/block}

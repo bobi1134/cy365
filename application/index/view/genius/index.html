@@ -1,0 +1,23 @@
+{extend name="layout/app" /}
+
+{block name="title"}项目展示{/block}
+
+
+
+{block name="content"}
+
+<div class="jumbotron ">
+
+</div>
+
+{/block}
+
+{block name="ext_js"}
+<!-- 解决移动端单击300ms延迟问题 -->
+<script type='application/javascript' src='/static/index/js/fastclick.js'></script>
+<script>
+    $(function() {
+        FastClick.attach(document.body);
+    });
+</script>
+{/block}

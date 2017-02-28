@@ -1,0 +1,148 @@
+{extend name="layout/app" /}
+{block name="ext_css"}
+<link href="//cdn.bootcss.com/sweetalert/1.1.3/sweetalert.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/static/admin/css/preview.css">
+{/block}
+
+{block name="content"}
+<section class="ui panel">
+    <header class="panel-heading">
+        <h1 class="text-center">{$projects_name}</h1>
+    </header>
+    <div class="panel-body">
+        <h3 class="text-left">审核照片</h3>
+        <div class="row">
+            {if condition="$response[5] eq ''"}
+            <div class="col-md-4">
+                <img src="{$response[2]}" width="100%" alt="身份证正面">
+            </div>
+            <div class="col-md-4">
+                <img src="{$response[3]}" width="100%" alt="身份证反面">
+            </div>
+            <div class="col-md-4">
+                <img src="{$response[4]}" width="100%" alt="身份证第一面">
+            </div>
+            {else /}
+            <div class="col-md-3">
+                <img src="{$response[2]}" width="100%" alt="身份证正面">
+            </div>
+            <div class="col-md-3">
+                <img src="{$response[3]}" width="100%" alt="身份证反面">
+            </div>
+            <div class="col-md-3">
+                <img src="{$response[4]}" width="100%" alt="身份证第一面">
+            </div>
+            <div class="col-md-3">
+                <img src="{$response[5]}" width="100%" alt="工商营业执照">
+            </div>
+            {/if}
+        </div>
+    </div>
+    <hr>
+    <div class="panel-body">
+        <h3 class="text-left">项目计划书</h3>
+        <div class="ui attached segment">
+            <div class="embed-responsive embed-responsive-16by9">
+                <iframe class="embed-responsive-item" width="100%" height="550px" src="{$response[0]}"></iframe>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="panel-body">
+        <h3 class="text-left">创业申报表</h3>
+        <div class="embed-responsive embed-responsive-16by9">
+            <iframe class="embed-responsive-item" width="100%" height="550px" src="{$response[1]}"></iframe>
+        </div>
+    </div>
+    <div class="navbar fadeInUpBig animated nav-bottom">
+    <div class="container" id="confirm">
+        <div class="row">
+            <div class="col-md-4 text-center">
+                <h4 class="text-left">请您选择是否通过该项目:</h4>
+            </div>
+            <div class="col-md-4  text-center">
+                <button class="btn btn-success" data-id="{$projects_id}" @click="confirm_pass"><i class="fa fa-check-square-o"></i> 通过</button>
+                <button class="btn btn-danger" data-id="{$projects_id}" @click="confirm_fail"><i class="fa fa-close"></i> 不通过</button>
+            </div>
+
+        </div>
+    </div>
+    </div>
+</section>
+{/block}
+{block name="ext_js"}
+<script src="//cdn.bootcss.com/sweetalert/1.1.3/sweetalert.min.js"></script>
+<script src="//cdn.bootcss.com/vue/2.0.0-alpha.1/vue.min.js"></script>
+<script>
+    new Vue({
+        el:"#confirm",
+        methods:{
+            confirm_fail:function(){
+                var btn=event.currentTarget;
+                var data_id=$(btn).attr('data-id');
+                swal({
+                    title: "项目未通过！",
+                    text: "请输入项目未通过的原因:",
+                    type: "input",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    confirmButtonText: "提交",
+                    cancelButtonText: "取消",
+                    animation: "slide-from-top",
+                    inputPlaceholder: "请输入未通过的原因"
+                }, function(inputValue){
+                    if (inputValue === false)
+                        return false;
+                    if (inputValue === "") {
+                        swal.showInputError("您还没有输入未通过的原因！");
+                        return false
+                    }
+
+                    $.ajax({
+                        type:"POST",
+                        dataType:"json",
+                        data:{id:data_id,note:inputValue},
+                        url:"{:url('admin/service/cybtReviewRefused')}",
+                        success:function(res){
+                            if(1===res.code){
+                                location.href=res.url;
+                            }
+                        },
+                        error:function(message){
+                            alert("系统出错啦！");
+                        }
+                    })
+                });
+            },
+            confirm_pass:function(){
+                var btn=event.currentTarget;
+                var data_id=$(btn).attr('data-id');
+
+                $.ajax({
+                    type:"POST",
+                    dataType:"json",
+                    data:{id:data_id},
+                    url:"{:url('admin/service/cybtReviewAgree')}",
+                    success:function(res){
+                        if(1===res.code){
+                            swal({
+                                title:res.msg,
+                                type:"success",
+                                confirmButtonText: "返回审核页面"
+                            },function (){
+                                location.href=res.url;
+                            })
+                        }else{
+                            alert("系统出错啦！");
+                        }
+                    },
+                    error:function(message){
+                        alert("系统出错啦:");
+                    }
+
+                })
+            }
+        }
+    });
+</script>
+{/block}

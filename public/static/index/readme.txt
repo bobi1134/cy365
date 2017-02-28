@@ -1,0 +1,5 @@
+本目录存放项目前台展示页面的静态数据如
+css
+js
+images
+fonts

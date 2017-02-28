@@ -1,0 +1,49 @@
+<aside>
+    <div id="sidebar"  class="nav-collapse ">
+        <!-- sidebar menu start-->
+        <ul class="sidebar-menu">
+        {php}
+            $path=request()->path();
+            $rule_in=\think\Session::get("rule_in");
+            if(empty($rule_in)){
+                echo '';
+            }else{
+                foreach ($rule_in as $key => $value) {
+                    if($value->pid==0&&$value->enabled==1){
+                        $res=strpos($path,$value->action);
+                        if($value->name=="后台首页"){
+                            echo "<li ";
+                            if($res!==false) echo "class='active'";
+                            echo "><a class='' href=".url($value->action).">
+                                        <i class='fa fa-dashboard'></i>
+                                        <span>$value->name</span>
+                                        </a>
+                                  </li>";
+                        }else{
+                            echo "<li class='sub-menu ";
+                            if($res!==false) echo 'active';
+                            echo "'>
+                                    <a href='javascript:;' class=''>
+                                        <i class='fa fa-reorder'></i>
+                                        <span>$value->name</span>
+                                        <span class='arrow'></span>
+                                    </a>
+                                    <ul class='sub'>";
+                            foreach ($rule_in as $key2 => $value2){
+                                if($value->id==$value2->pid&&$value2->enabled==1){
+                                    $res2=strpos($path,$value2->action);
+                                    echo "<li ";
+                                    if($res2!==false) echo "class='active'";
+                                    echo "><a href=".url($value2->action).">$value2->name</a></li>";
+                                }
+                            }
+                            echo "</ul></li>";    
+                        }
+                    }
+                }
+            }
+        {/php}
+        </ul>
+        <!-- sidebar menu end-->
+    </div>
+</aside>

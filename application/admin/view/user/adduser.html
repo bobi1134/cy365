@@ -1,0 +1,101 @@
+{extend name="layout/app"/}
+
+{block name="ext_css"}
+<link rel="stylesheet" href="/static/admin/css/select2.min.css">
+{/block}
+{block name="content"}
+<div class="col-md-8 col-md-offset-2">
+    <section class="panel">
+        <header class="panel-heading">
+            <h4>添加管理员</h4>
+        </header>
+        <div class="panel-body">
+            <form class="form-horizontal" role="form">
+                <div class="form-group">
+                    <label for="inputEmail1" class="col-lg-2 control-label">登录邮箱：</label>
+                    <div class="col-lg-10">
+                        <input type="email" name="email" class="form-control" id="inputEmail1" placeholder="请输入管理员邮箱" required>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputPassword1" class="col-lg-2 control-label">登录密码：</label>
+                    <div class="col-lg-10">
+                        <input type="password" name="passwd" class="form-control" id="inputPassword1" placeholder="请输入登录密码" required>
+                        <p class="help-block"></p>
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <label for="inputName" class="col-lg-2 control-label">管理员姓名：</label>
+                    <div class="col-lg-10">
+                        <input type="text" name="name" class="form-control" id="inputName" placeholder="请输入管理员姓名" required>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputPhone" class="col-lg-2 control-label">手机号码：</label>
+                    <div class="col-lg-10">
+                        <input type="text" name="phone" class="form-control" id="inputPhone" placeholder="请输入管理员手机号码" required>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputName" class="col-lg-2 control-label">管理员权限：</label>
+                    <div class="col-lg-10" id="vue-select">
+                        <select name="power_id" class="form-control" id="rules">
+                            {foreach $authGroup as $val}
+                            <option value="{$val.id}">{$val.title}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-lg-offset-2 col-lg-10">
+                        <button type="button" id="addAdmin" class="btn btn-danger">添加管理员</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+</div>
+
+{/block}
+{block name="ext_js"}
+<script src="//cdn.bootcss.com/select2/4.0.3/js/select2.full.min.js"></script>
+<script>
+    $("#rules").select2();
+    $("#addAdmin").click(function(){
+        var data={
+            email:$("#inputEmail1").val(),
+            passwd:$("#inputPassword1").val(),
+            phone:$("#inputPhone").val(),
+            power_id:$("#rules").val(),
+            name:$("#inputName").val()
+        }
+        console.log(data);
+        $.ajax({
+            type:"POST",
+            dataType:"json",
+            data:data,
+            url:"{:url('admin/user/add')}",
+            beforeSend:function(){
+                layer.load();
+            },
+            success:function(res){
+                layer.closeAll();
+                if(res.code==1){
+                    layer.msg(res.msg);
+                }else{
+                    layer.msg(res.msg);
+                }
+                location.reload()
+            },
+            error:function(){
+                layer.closeAll();
+                layer.alert("抱歉,系统出错了");
+            }
+        })
+    })
+</script>
+{/block}

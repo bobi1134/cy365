@@ -1,0 +1,51 @@
+<div class="footer-low">
+    <div class="container">
+        <div class="row">
+            <div class="col-ss-12 col-xs-12 col-sm-12 col-md-10 col-lg-8">
+                <p>
+                    <span><a href="{:url('index/index/index')}">网站首页</a></span>
+                    <span><a href="javascript:void(0);">创业培训</a></span>
+                    <span><a href="javascript:void(0);">创业测评</a></span>
+                    <span><a href="javascript:void(0);">优秀案例</a></span>
+                    <span><a href="javascript:void(0);">招聘信息</a></span>
+                    <span><a href="javascript:void(0);">联系我们</a></span>
+                    <span><a href="javascript:void(0);">关于我们</a></span>
+                    <span><a href="javascript:void(0);">友情链接</a></span>
+                </p>
+                <p>
+                    Copyright © {:date("Y")} &nbsp;&nbsp;{$organization}&nbsp;&nbsp;  All Rights Reserved | {$beianhao}
+                </p>
+            </div>
+            <div class="col-md-2 col-md-offset-0 col-lg-2 col-lg-offset-2 hidden-ss hidden-xs hidden-sm">
+                <div class="footer-low-share" id="footer-low-share"></div>
+                <script>
+                    function WeiXinShareBtn() {
+                        $("#share_wechat").modal("toggle");
+                    }
+                </script>
+                <script>
+                    var loca_url = window.location.href;
+                    document.getElementById('footer-low-share').innerHTML = "<a href='http://connect.qq.com/widget/shareqq/index.html?url=http%3A%2F%2F"+loca_url+"%2Fcy%2F&desc=&title=&summary=&pics=&flash=&site=&showcount=' title='分享到QQ' class='footer-low-share-qq' target='_blank'></a><a href='http://service.weibo.com/share/share.php?url=%3A%2F%2F"+loca_url+"&appkey=&title=&pic=&ralateUid=&language=' class='footer-low-share-sina' title='分享到新浪微博' target='_blank'></a><a href='javascript:void(0)' onclick='WeiXinShareBtn()' class='footer-low-share-wechat' title='分享到微信' target='_blank'></a>";
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 关注微信公众号，弹出模态框 -->
+<div class="modal" id='share_wechat'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">请扫描下方二维码，关注微信公众号，谢谢！</h4>
+            </div>
+            <div class="modal-body">
+                <p class="text-center"><img width="210" height="210" src="/static/index/images/cy365-qr.jpg" alt="川农就业微信公众号"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <a href="/static/index/images/cy365-qr.jpg" class="btn btn-primary">下载</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,112 @@
+{extend name="layout/app" /}
+{block name="ext_css"}
+<link rel="stylesheet" href="/static/admin/css/layer.css">
+{/block}
+{block name="content"}
+<div class="col-md-12">
+    <section class="panel" id="projects">
+        <header class="panel-heading">
+            <h4>创业资讯列表</h4>
+        </header>
+        <project-app>
+
+
+        </project-app>
+    </section>
+</div>
+<script type="text/x-template" id="project-template">
+    <table id="example" class="table">
+        <thead>
+        <tr class="text-center">
+            <th>ID</th>
+            <th>文章标题</th>
+            <th>阅读数</th>
+            <th>置顶</th>
+            <th>作者</th>
+            <th>发布时间</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr v-for="project in list">
+            <td>{{ project.id }}</td>
+            <td>{{ project.title }}</td>
+            <td>{{ project.read_num }}</td>
+            <td>{{ project.is_top }}</td>
+            <td>
+                {{ project.author }}
+            </td>
+            <td>
+                {{ project.created_at }}
+            </td>
+            <td>
+                <a href="#" class="btn btn-success btn-xs"><i class="fa fa-eye"></i> 点击查看</a>
+                <a v-bind:href="project.url='/admin/news/edit.html?id='+project.id" class="btn btn-warning btn-xs"><i class="fa fa-pencil-square-o"></i> 修改文章</a>
+                <a href="#" @click.stop.prevent="deleteArticle(project.id)" class="btn btn-danger btn-xs"><i class="fa fa-close"></i> 删除文章</a>
+            </td>
+        </tr>
+        </tbody>
+
+    </table>
+
+</script>
+{/block}
+{block name="ext_js"}
+<script>
+
+    Vue.component('project-app',{
+        template:"#project-template",
+        data:function(){
+            return {
+                list:[],
+            }
+        },
+        props: {
+            list: Object,
+        },
+        created:function() {
+            layer.msg("正在努力加载中...");
+            var vm = this;
+            $.getJSON("{:url('admin/news/getAllNews')}", function (res) {
+
+                if(res.code==1){
+                    vm.list = res.data;
+                }
+            });
+        },
+        methods:{
+            deleteArticle:function(id){
+                console.log('ca')
+                $.ajax({
+                    type:"POST",
+                    dataType:"json",
+                    data:{id:id},
+                    url:"{:url('admin/news/delete')}",
+                    beforeSend:function(){
+                        layer.load();
+                    },
+                    success:function(res){
+                        layer.closeAll();
+                        if(res.code==1){
+                            layer.msg(res.msg,function(){
+                                location.reload()
+                            });
+                        }else{
+                            layer.msg(res.msg);
+                        }
+                    },
+                    error:function(){
+                        layer.closeAll();
+                        layer.alert("抱歉,系统出错了!")
+                    }
+                })
+            }
+        }
+    });
+    new Vue({
+        el:"#projects",
+    })
+</script>
+{/block}
+

@@ -1,0 +1,384 @@
+{extend name="layout/app" /}
+
+{block name="title"}绑定银行卡 - {/block}
+
+{block name="ext_css"}
+<link href="//cdn.bootcss.com/select2/4.0.3/css/select2.min.css" rel="stylesheet">
+{/block}
+{block name="content"}
+<section class="panel">
+    <div class="bio-graph-heading">
+        <h1>绑定银行卡</h1>
+    </div>
+    <section class="panel">
+        {if condition="$status eq 0"}
+        <div class="panel-body">
+
+            <div class="form">
+                <form  class="cmxform form-horizontal tasi-form">
+                    <input type="hidden" value="{$user_id}">
+                    <div class="form-group ">
+                        <label for="InputBankName" class="control-label col-lg-2">开户银行：</label>
+                        <div class="col-lg-10">
+                            <input class="form-control" v-model="bank_name" id="InputBankName" type="text" placeholder="请填写您的开户银行，如：中国工商银行">
+                            <label for="InputBankName" v-show="bank_name_notice" class="error">请输入开户银行!</label>
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label for="InputBankAccount" class="control-label col-lg-2">银行账号：</label>
+                        <div class="col-lg-10">
+                            <input class="form-control" v-model="bank_account" id="InputBankAccount" type="text" placeholder="请填写您的银行账号">
+                            <label for="InputBankAccount" v-show="bank_account_notice" class="error">请输入银行账号!</label>
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label for="InputBankOwnership" class="control-label col-lg-2">开户人：</label>
+                        <div class="col-lg-10">
+                            <input class="form-control" v-model="bank_ownership" id="InputBankOwnership" type="text" placeholder="请填写开户人，如：张三">
+                            <label for="InputBankOwnership" v-show="bank_ownership_notice" class="error">请输入开户人信息!</label>
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label for="InputVerify" class="control-label col-lg-2">请输入验证码：</label>
+                        <div class="col-lg-10">
+                            <div class="input-group m-bot15">
+
+                                <input v-bind:class="{'error':verify_code}" style="border-radius: 4px;border-top-right-radius: 0;border-bottom-right-radius: 0;" class="form-control" v-model="verify" id="InputVerify" type="text" >
+                                <span class="input-group-btn">
+                                    <button class="btn btn-info form-control" @click="getVerify" style="border-radius: 4px;border-top-left-radius: 0;border-bottom-left-radius: 0;" type="button">获取验证码</button>
+                                  </span>
+
+
+                            </div>
+                            <label for="InputVerify" v-show="verify_code" class="error">请输入验证码!</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-offset-2 col-lg-10 text-center">
+                            <button class="btn btn-success btn-app" type="button" v-on:click="updateBank">保存</button>
+                            <a class="btn btn-default btn-app" href="{:url('user/index/index')}">返回</a>
+                        </div>
+                    </div>
+                </form>
+                <script>
+                    var vm=new Vue({
+                        el:".panel",
+                        data:{
+                            bank_name: '',
+                            bank_account: '',
+                            bank_ownership: '',
+                            verify:'',
+                            bank_name_notice:false,
+                            bank_account_notice:false,
+                            bank_ownership_notice:false,
+                            verify_code:false
+                        },
+                        methods: {
+                            updateBank: function () {
+                                this.bank_name_notice=(this.bank_name=='')?true:false;
+                                this.bank_account_notice=(this.bank_account=='')?true:false;
+                                this.bank_ownership_notice=(this.bank_ownership=='') ? true : false;
+                                this.verify_code=(this.verify=='')?true:false;
+                                if(this.bank_name_notice){
+                                    return false;
+                                }
+                                if(this.bank_account_notice){
+                                    return false;
+                                }
+                                if(this.bank_ownership_notice){
+                                    return false;
+                                }
+                                if(this.verify_code){
+                                    return false;
+                                }
+                                var data={
+                                    bank_name:this.bank_name,
+                                    bank_account:this.bank_account,
+                                    bank_ownership:this.bank_ownership,
+                                    verify_code:this.verify
+                                };
+                                var btn=event.currentTarget;
+                                $.ajax({
+                                    type:"POST",
+                                    dataType:"json",
+                                    data:data,
+                                    url:"{:url('user/account/updateBank')}",
+                                    beforeSend:function(){
+                                        $(btn).addClass('disabled');
+                                    },
+                                    success:function(res){
+                                        if(res.code==1){
+                                            swal({
+                                                title:"",
+                                                text:res.msg,
+                                                type:'success'
+                                            },function(){
+                                                location.href=res.url
+                                            })
+                                        }else{
+                                            swal({
+                                                title:"",
+                                                text:res.msg,
+                                                type:'error'
+                                            });
+                                        }
+                                    },
+                                    error: function () {
+                                        swal({
+                                            title:"",
+                                            text:"真是抱歉,系统出错了",
+                                            type:"error"
+                                        },function(){
+                                            location.reload();
+                                        })
+                                    },
+                                    complete:function(){
+                                        $(btn).removeClass('disabled');
+                                    }
+                                })
+
+                            },
+                            getVerify:function(){
+                                var btn=event.currentTarget;
+                                $.ajax({
+                                    type:"POST",
+                                    dataType:"json",
+                                    url:"{:url('user/account/sendBankVerify')}",
+                                    beforeSend:function(){
+                                        $(btn).addClass('disabled').text('正在发送中');
+                                    },
+                                    success:function(res){
+                                        if(res.code!=1){
+                                            swal({
+                                                title:"",
+                                                text:res.msg,
+                                                type:'error'
+                                            },function(){
+                                                location.reload();
+                                            });
+                                        }else{
+                                            swal({
+                                                title:"",
+                                                text:res.msg,
+                                                type:'success'
+                                            });
+                                            $(btn).text('发送完毕');
+                                        }
+                                    },
+                                    error:function(){
+                                        swal({
+                                            title:"",
+                                            text:"抱歉,系统出错了",
+                                            type:"error"
+                                        },function(){
+                                            location.reload();
+                                        })
+                                    }
+                                })
+                            }
+                        }
+                    })
+                </script>
+            </div>
+
+
+
+        </div>
+        {else /}
+        <div class="panel-body" id="bank-info">
+            <div class="col-md-12">
+                <form class="cmxform form-horizontal tasi-form" >
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">开户银行：</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" type="text" v-model="bank_name" v-bind:value="list.bank_name" disabled="">
+                            <label for="InputBankName" v-show="bank_name_notice" class="error">请输入开户银行!</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">银行账号：</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" type="text" v-model="bank_account" v-bind:value="list.bank_account" disabled="">
+                            <label for="InputBankAccount" v-show="bank_account_notice" class="error">请输入银行账号!</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">开户人：</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" type="text" v-model="bank_ownership" v-bind:value="list.bank_ownership" disabled="">
+                            <label for="InputBankOwnership" v-show="bank_ownership_notice" class="error">请输入开户人信息!</label>
+                        </div>
+
+                    </div>
+                    <div class="form-group" v-show="updateBank">
+                        <label for="InputVerify" class="control-label col-lg-2">请输入验证码：</label>
+                        <div class="col-lg-10">
+                            <div class="input-group m-bot15">
+
+                                <input v-bind:class="{'error':verify_code}" style="border-radius: 4px;border-top-right-radius: 0;border-bottom-right-radius: 0;" class="form-control" v-model="verify" id="InputVerify" type="text" >
+                                <span class="input-group-btn">
+                                    <button class="btn btn-info form-control" @click="getVerify" style="border-radius: 4px;border-top-left-radius: 0;border-bottom-left-radius: 0;" type="button">获取验证码</button>
+                                  </span>
+
+
+                            </div>
+                            <label for="InputVerify" v-show="verify_code" class="error">请输入验证码!</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-offset-2 col-lg-10 text-center">
+                            <button class="btn btn-info btn-block" v-show="updateBank==false" @click.stop.prevent="updateInfo">修改绑定信息</button>
+                            <button class="btn btn-success" v-show="updateBank" @click.stop.prevent="updateBankInfo">保存</button>
+                            <a class="btn btn-danger" v-show="updateBank" href="{:url('user/index/index')}">取消</a>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+        </div>
+            <script>
+                var bank_info = new Vue({
+                    el:"#bank-info",
+                    data:{
+                        list:[],
+                        updateBank:false,
+                        bank_name: '',
+                        bank_account: '',
+                        bank_ownership: '',
+                        verify:'',
+                        bank_name_notice:false,
+                        bank_account_notice:false,
+                        bank_ownership_notice:false,
+                        verify_code:false
+                    },
+                    props:{
+                        list:Object
+                    },
+                    created:function(){
+                        $.getJSON("{:url('user/account/getBankInfo')}",function(res){
+                            bank_info.list=res.data;
+                        })
+                    },
+                    methods:{
+                        updateInfo:function(){
+                            var btn=event.currentTarget;
+                            bank_info.updateBank=true;
+                            $("form input").attr("disabled",false);
+                        },
+                        updateBankInfo: function () {
+                            this.bank_name_notice=(this.bank_name=='')?true:false;
+                            this.bank_account_notice=(this.bank_account=='')?true:false;
+                            this.bank_ownership_notice=(this.bank_ownership=='') ? true : false;
+                            this.verify_code=(this.verify=='')?true:false;
+                            if(this.bank_name_notice){
+                                return false;
+                            }
+                            if(this.bank_account_notice){
+                                return false;
+                            }
+                            if(this.bank_ownership_notice){
+                                return false;
+                            }
+                            if(this.verify_code){
+                                return false;
+                            }
+                            var data={
+                                bank_name:this.bank_name,
+                                bank_account:this.bank_account,
+                                bank_ownership:this.bank_ownership,
+                                verify_code:this.verify
+                            };
+                            var btn=event.currentTarget;
+                            $.ajax({
+                                type:"POST",
+                                dataType:"json",
+                                data:data,
+                                url:"{:url('user/account/updateBank')}",
+                                beforeSend:function(){
+                                    $(btn).addClass('disabled');
+                                },
+                                success:function(res){
+                                    if(res.code==1){
+                                        swal({
+                                            title:"",
+                                            text:res.msg,
+                                            type:'success'
+                                        },function(){
+                                            location.href=res.url
+                                        })
+                                    }else{
+                                        swal({
+                                            title:"",
+                                            text:res.msg,
+                                            type:'error'
+                                        });
+                                    }
+                                },
+                                error: function () {
+                                    swal({
+                                        title:"",
+                                        text:"真是抱歉,系统出错了",
+                                        type:"error"
+                                    },function(){
+                                        location.reload();
+                                    })
+                                },
+                                complete:function(){
+                                    $(btn).removeClass('disabled');
+                                }
+                            })
+
+                        },
+                        getVerify:function(){
+                            var btn=event.currentTarget;
+                            $.ajax({
+                                type:"POST",
+                                dataType:"json",
+                                url:"{:url('user/account/sendBankVerify')}",
+                                beforeSend:function(){
+                                    $(btn).addClass('disabled').text('正在发送中');
+                                },
+                                success:function(res){
+                                    if(res.code!=1){
+                                        swal({
+                                            title:"",
+                                            text:res.msg,
+                                            type:'error'
+                                        },function(){
+                                            location.reload();
+                                        });
+                                    }else{
+                                        swal({
+                                            title:"",
+                                            text:res.msg,
+                                            type:'success'
+                                        });
+                                        $(btn).text('发送完毕');
+                                    }
+                                },
+                                error:function(){
+                                    swal({
+                                        title:"",
+                                        text:"抱歉,系统出错了",
+                                        type:"error"
+                                    },function(){
+                                        location.reload();
+                                    })
+                                }
+                            })
+                        }
+                    }
+                })
+            </script>
+        </div>
+        {/if}
+    </section>
+</section>
+
+{/block}
+
+{block name="ext_js"}
+<script src="//cdn.bootcss.com/select2/4.0.3/js/select2.min.js"></script>
+
+{/block}

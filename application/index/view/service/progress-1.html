@@ -1,0 +1,190 @@
+{extend name="layout/app" /}
+
+{block name="title"}创业服务{/block}
+
+{block name="ext_css"}
+
+<link href="//cdn.bootcss.com/sweetalert/1.1.3/sweetalert.min.css" rel="stylesheet">
+<link href="//cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/static/index/css/style.css" />
+{/block}
+
+{block name="content"}
+
+<div class="jumbotron jumbotron-custom">
+	<p class="text-info text-center jumbotron-title">创业补贴申报系统</p>
+
+</div>
+<div class="container service-main-content">
+	<div class="row service-container">
+		{include file="service/service-head"}
+		<div class="service-body" id="service-type">
+			<div class="col-md-12 col-xs-12">
+				<p class="type-title">选择申报类型：</p>
+			</div>
+
+			<div class="row type-container">
+				<a class="type-list" data-type="1" v-bind:class="{'active':last_input.type==1}" @click="setActive">
+					<div class="type-list-icon">
+						<img src="/static/index/images/1.svg" onerror="this.src='/static/index/images/1_03.png'" alt="个人领办的创业项目"/>
+					</div>
+					<div class="type-list-title">
+						<p>个人领办的创业项目</p>
+					</div>
+				</a>
+
+
+				<a class="type-list" v-bind:class="{'active':(last_input.type==2||last_input.type==0)}" data-type="2" @click="setActive">
+					<div class="type-list-icon">
+						<img src="/static/index/images/4.svg" onerror="this.src='/static/index/images/4_03.png'" alt="创业团队的创业项目"/>
+					</div>
+					<div class="type-list-title">
+						<p>创业团队的创业项目</p>
+					</div>
+				</a>
+
+
+				<a class="type-list" v-bind:class="{'active':last_input.type==3}" data-type="3" @click="setActive">
+					<div class="type-list-icon">
+						<img src="/static/index/images/5.svg" onerror="this.src='/static/index/images/5_03.png'" alt="创业实体领办的创业项目"/>
+					</div>
+					<div class="type-list-title">
+						<p>创业实体领办的创业项目</p>
+					</div>
+				</a>
+
+			</div>
+			<div class="col-md-12 col-xs-12">
+				<p class="type-title">输入项目信息：</p>
+			</div>
+			<div class="col-md-12 col-xs-12">
+				<div class="project-info">
+					<form action="" method="post" class="ui equal width form">
+						<div class="col-md-6 col-xs-6 col-lg-6">
+							<div class="form-group">
+								<label>项目名称:</label>
+								<input type="text" name="projects_name" v-bind:value="last_input.projects_name" v-model="project_name" placeholder="项目名称" required >
+							</div>
+							<div class="form-group">
+								<label>团队人数:</label>
+								<input type="text" name="members" v-bind:value="last_input.members" v-model="project_members" placeholder="团队人数" required >
+							</div>
+						</div>
+						<div class="col-md-6 col-xs-6 col-lg-6">
+							<div class="form-group">
+								<label>是否创业实体:</label>
+								<select class="form-control" disabled>
+
+									<option value="0">否</option>
+									<option value="1" v-if="isEntity" selected>是</option>
+
+								</select>
+							</div>
+							<div class="form-group">
+								<label>指导老师:</label>
+								<input type="text" name="counselor" v-bind:value="last_input.counselor" v-model="project_counselor" placeholder="指导老师" required >
+							</div>
+						</div>
+						<div class="col-md-12 col-xs-12 col-lg-12 ">
+							<label>项目简介(150个字以内)：</label>
+							<textarea rows="3" cols="50" v-model="project_briefing" name="briefing" v-bind:value="last_input.briefing"></textarea>
+						</div>
+
+					</form>
+				</div>
+			</div>
+			<div class="col-md-12 col-xs-12">
+				<div class="service-notice">
+					<p>1. 创业项目计划书严禁弄虚作假，一旦发现雷同、抄袭情况，取消申报资格；</p>
+					<p>2. 从2016年1月1日起，高校创业补贴实行月报制，各创业项目可于每月15交创业补贴申报申请，15日后申报入口关闭；</p>
+					<p>3. 每个创业实体/创业项目/创业负责人只能享受一次创业补贴，不得重复申请，每次创业补贴可同时申报多个项目，最高补贴不超过10万元。</p>
+				</div>
+				<div class="text-center">
+					<a v-on:click.stop="goNext()" class="btn-submit">下一步，提交项目资料</a>
+				</div>
+
+			</div>
+
+		</div>
+	</div>
+
+</div>
+{/block}
+
+{block name="ext_js"}
+<!-- 解决移动端单击300ms延迟问题 -->
+<script type='application/javascript' src='/static/index/js/fastclick.js'></script>
+<script src="//cdn.bootcss.com/sweetalert/1.1.3/sweetalert.min.js"></script>
+<script src="//cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.js"></script>
+<script>
+	$(function() {
+		FastClick.attach(document.body);
+	});
+	$(".type-list").click(function(){
+		$(this).addClass('active');
+		$(this).siblings(".type-list").removeClass("active");
+	})
+	var vm=new Vue({
+		el:'body',
+		data:{
+			project_name:"",
+			project_members:"",
+			project_counselor:"",
+			project_briefing:"",
+			isEntity:false,
+			last_input:[]
+		},
+		created:function(){
+			this.last_input={$data};
+
+		},
+		props:{
+			data:Array
+		},
+		methods:{
+			goNext:function (){
+				var type=$('.type-list.active').attr('data-type');
+				var data={
+					id:'{:\\Think\\Request::instance()->param("id")}',
+					type:type,
+					projects_name:this.project_name,
+					members:this.project_members,
+					counselor:this.project_counselor,
+					briefing:this.project_briefing
+				};
+
+				$.ajax({
+					type:"POST",
+					dataType:'json',
+					data:data,
+					url:'{:url("index/service/cybtTypeTapped")}',
+					beforeSend : function(){
+						$(".btn-submit").addClass("ui loading button");
+					},
+					success:function(res){
+						if(res.code === 1){
+							location.href=res.url;
+						}else{
+							swal("", res.msg, "error");
+							$(".btn-submit").removeClass("ui loading button");
+						}
+					},
+					error:function(res){
+						swal("", res.msg, "error");
+						$(".btn-submit").removeClass("ui loading button");
+					}
+				})
+			},
+			setActive:function(){
+				var this_el=event.currentTarget;
+				var type=$(this_el).attr('data-type');
+				$(this_el).addClass("active");
+				$(this_el).siblings(".type-list").removeClass("active");
+				(type==3)?(this.isEntity=true):(this.isEntity=false);
+			}
+		}
+	})
+</script>
+
+<script src="http://connect.qq.com/widget/loader/loader.js" widget="shareqq" charset="utf-8"></script>
+{/block}

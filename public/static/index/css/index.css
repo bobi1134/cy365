@@ -1,0 +1,50 @@
+@media (min-width: 768px) {
+	.modal-dialog {
+	    width: 372px;
+	    margin: 30px auto;
+	}
+}
+body{
+	font-family: "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+input:-webkit-autofill,textarea:-webkit-autofill,select:-webkit-autofill{
+	-webkit-box-shadow: 0 0 0px 1000px white inset;
+}
+.help-block{
+	margin:0;
+	font-size:12px;
+}
+.text-muted {
+	color: #ccc;
+}
+.text-danger {
+	color: #FF6C60;
+}
+.text-success {
+	color: #A9D86E;
+}
+.modal-content{
+	border-radius: 3px;
+}
+.user-one,.user-submit{
+	width: 100%;
+	height: 50px;
+	box-sizing: border-box;
+	border: 1px solid #e7e7e7;
+	padding: 10px;
+	margin: 10px 0;
+	font-size: 16px;
+}
+.user-submit,.user-submit:hover{
+	border: none;
+}
+.user-submit{
+	color: white;
+}
+.checkbox label, .radio label{
+	padding-left: 5px;
+}
+.goregist{
+	height: auto;
+	overflow: hidden;
+}

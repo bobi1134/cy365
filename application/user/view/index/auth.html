@@ -1,0 +1,175 @@
+{extend name="layout/app" /}
+
+{block name="title"}实名认证 - {/block}
+
+{block name="content"}
+<section class="panel">
+    <div class="bio-graph-heading">
+        <h1>实名认证</h1>
+    </div>
+    <div class="panel-body">
+        {switch name="user.status"}
+
+        {case value="1"}
+        <div class="row">
+            <div class="col-md-3 col-md-offset-2 col-xs-12 text-center">
+                <img src="data:image/jpg;base64,{$user.idcardphoto}" style="margin-top: 1.5em;">
+                <h4><span class="icon-info-sign text-warning">审核中</span></h4>
+            </div>
+            <div class="col-md-7 col-xs-12 auth-info">
+                <div class="col-md-4 col-xs-4">
+                    <h4 class="text-right text-muted">
+                        姓名：
+                    </h4>
+                    <h4 class="text-right text-muted">
+                        身份证号：
+                    </h4>
+                    <h4 class="text-right text-muted">
+                        家庭住址：
+                    </h4>
+                    <h4 class="text-right text-muted">
+                        性别：
+                    </h4>
+                    <h4 class="text-right text-muted">
+                        出生日期：
+                    </h4>
+                </div>
+                <div class="col-md-8 col-xs-8">
+                    <h4 class="text-left">
+                        {$user.realname}
+                    </h4>
+                    <h4 class="text-left">
+                        {$user.idcard}
+                    </h4>
+                    <h4 class="text-left">
+                        {$user.area}
+                    </h4>
+                    <h4 class="text-left">
+                        {$user.sex}
+                    </h4>
+                    <h4 class="text-left">
+                        {$user.birthday}
+                    </h4>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="alert alert-warning" role="alert">您已提交实名认证资料，请等待审核结果。</div>
+            </div>
+
+        </div>
+        {/case}
+
+        {case value="2"}
+        <div class="row">
+            <div class="col-md-3 col-md-offset-2 col-xs-12 text-center">
+                <img src="data:image/jpg;base64,{$user.idcardphoto}" style="margin-top: 1.5em;">
+                <h4><span class="icon-check text-success">已认证</span></h4>
+            </div>
+            <div class="col-md-7 col-xs-12 auth-info">
+                <div class="col-md-4 col-xs-4">
+                    <h4 class="text-right text-muted">
+                        姓名：
+                    </h4>
+                    <h4 class="text-right text-muted">
+                        身份证号：
+                    </h4>
+                    <h4 class="text-right text-muted">
+                        家庭住址：
+                    </h4>
+                    <h4 class="text-right text-muted">
+                        性别：
+                    </h4>
+                    <h4 class="text-right text-muted">
+                        出生日期：
+                    </h4>
+                </div>
+                <div class="col-md-8 col-xs-8">
+                    <h4 class="text-left">
+                        {$user.realname}
+                    </h4>
+                    <h4 class="text-left">
+                        {:substr_replace($user.idcard,'****',11,4)}
+                    </h4>
+                    <h4 class="text-left">
+                        {$user.area}
+                    </h4>
+                    <h4 class="text-left">
+                        {$user.sex}
+                    </h4>
+                    <h4 class="text-left">
+                        {$user.birthday}
+                    </h4>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="alert alert-success" role="alert">恭喜您已通过实名认证资料的审核。</div>
+            </div>
+
+        </div>
+        {/case}
+
+        {default /}
+        <form class="form-horizontal col-md-9" role="form">
+            <div class="form-group">
+                <label for="inputRealName" class="col-lg-2 control-label">真实姓名</label>
+                <div class="col-lg-10">
+                    <input type="text" class="form-control"   name="realName" id="inputRealName" placeholder="请填写您的真实姓名" required>
+                    <p class="help-block">&nbsp;</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputIDNumber" class="col-lg-2 control-label">身份证号码</label>
+                <div class="col-lg-10">
+                    <input type="text" class="form-control" name="Idcard" id="inputIDNumber" placeholder="请填写您的身份证号码" required>
+                    <p class="help-block">&nbsp;</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="alert alert-warning" role="alert">尊敬的用户，实名认证功能无论成功与否一天只能认证一次哦！</div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-4 col-lg-offset-2">
+                    <button type="button" class="btn btn-success btn-block" id="submit-auth">提交审核</button>
+                </div>
+            </div>
+        </form>
+        {/switch}
+
+    </div>
+</section>
+
+{/block}
+
+{block name="ext_js"}
+
+<script>
+   $("#submit-auth").click(function(){
+       var data={realName:$("#inputRealName").val(),Idcard:$("#inputIDNumber").val()};
+       $.ajax({
+           type:"POST",
+           dataType:"json",
+           data:data,
+           url:"{:url('user/account/uploadAuthInfo')}",
+           success:function(res){
+               if(res.code!=1){
+                   swal({
+                       title:"",
+                       text:res.msg,
+                       type:"error",
+                       closeOnConfirm:false
+                   })
+               }else{
+                   swal({
+                       title:"",
+                       text:res.msg,
+                       type:"success",
+                       closeOnConfirm:false
+                   },function(){
+                       location.reload();
+                   })
+               }
+           }
+       })
+   })
+</script>
+{/block}

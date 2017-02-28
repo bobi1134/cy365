@@ -1,0 +1,54 @@
+{extend name="layout/app" /}
+{block name="title"}申报记录{/block}
+
+
+{block name="content"}
+        <div class="row">
+            <h3 class="text-info">项目名称:<span class="text-muted">{$projects_name}</span></h3>
+        </div>
+        <hr>
+        <div class="row">
+            {if condition="$response[5] eq ''"}
+            <div class="col-md-4">
+                <img src="{$response[2]}" height="173px" alt="身份证正面">
+            </div>
+            <div class="col-md-4">
+                <img src="{$response[3]}" height="173px" alt="身份证反面">
+            </div>
+            <div class="col-md-4">
+                <img src="{$response[4]}" height="173px" alt="学生证第一面">
+            </div>
+            {else /}
+            <div class="col-md-3">
+                <img src="{$response[2]}" height="173px" alt="身份证正面">
+            </div>
+            <div class="col-md-3">
+                <img src="{$response[3]}" height="173px" alt="身份证反面">
+            </div>
+            <div class="col-md-3">
+                <img src="{$response[4]}" height="173px" alt="学生证第一面">
+            </div>
+            <div class="col-md-3">
+                <img src="{$response[5]}" height="173px" alt="营业执照">
+            </div>
+            {/if}
+        </div>
+        <hr>
+        <div class="row">
+            <h3 class="text-info text-left">项目计划书</h3>
+            <div class="embed-responsive embed-responsive-16by9">
+                <iframe class="embed-responsive-item" src="{$response[0]}"></iframe>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <h3 class="text-info text-left">创业申报表 </h3>
+
+            <div class="embed-responsive embed-responsive-16by9">
+                <iframe class="embed-responsive-item" src="{$response[1]}"></iframe>
+            </div>
+
+        </div>
+
+
+{/block}

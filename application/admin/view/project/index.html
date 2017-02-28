@@ -1,0 +1,98 @@
+{extend name="layout/app" /}
+{block name="ext_css"}
+<link rel="stylesheet" href="/static/admin/css/layer.css">
+{/block}
+{block name="content"}
+<div class="col-md-12">
+    <section class="panel" id="projects">
+        <header class="panel-heading">
+            <h4>创业补贴项目列表</h4>
+        </header>
+        <project-app>
+
+
+        </project-app>
+    </section>
+</div>
+<script type="text/x-template" id="project-template">
+    <table id="example" class="table">
+        <thead>
+            <tr class="text-center">
+                <th>编号</th>
+                <th>申报类型</th>
+                <th>项目名称</th>
+                <th>所在学院</th>
+                <th>申报人学号</th>
+                <th>申报时间</th>
+                <th>初审</th>
+                <th>复审</th>
+                <th>查看</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr v-for="project in list">
+                <td>{{ project.cybt_id }}</td>
+                <td>{{ project.type }}</td>
+                <td>{{ project.name }}</td>
+                <td>{{ project.academy }}</td>
+                <td>{{ project.std_id }}</td>
+                <td>{{ project.submit_time }}</td>
+                <td>
+                    {{ project.first_review }}
+                </td>
+                <td>
+                    {{ project.last_review }}
+                </td>
+                <td>
+                    <form action="{:url('admin/service/view')}" method="post">
+                        <input type="hidden" name="id[0]" v-bind:value="project.file_id_0">
+                        <input type="hidden" name="id[1]" v-bind:value="project.file_id_1">
+                        <input type="hidden" name="id[2]" v-bind:value="project.file_id_2">
+                        <input type="hidden" name="id[3]" v-bind:value="project.file_id_3">
+                        <input type="hidden" name="id[4]" v-bind:value="project.file_id_4">
+                        <input type="hidden" name="id[5]" v-bind:value="project.file_id_5">
+                        <input type="hidden" name="projects_name" v-bind:value="project.projects_name">
+                        <input type="hidden" name="projects_id" v-bind:value="project.cybt_id">
+                        <button type="submit" class="btn btn-success btn-xs"><i class="fa fa-eye"></i> 点击查看</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+
+    </table>
+
+</script>
+{/block}
+{block name="ext_js"}
+
+<script src="//cdn.bootcss.com/vue/2.0.0-alpha.1/vue.min.js"></script>
+<script>
+
+    Vue.component('project-app',{
+        template:"#project-template",
+        data:function(){
+            return {
+                list:[],
+            }
+        },
+        props: {
+            list: Object,
+        },
+        created:function() {
+            layer.msg("正在努力加载中...");
+            var vm = this;
+            $.getJSON("{:url('admin/service/cybtGetAllList')}", function (res) {
+
+                if(res.code==1){
+                    vm.list = res.data;
+                }
+            });
+        }
+    });
+    new Vue({
+        el:"#projects",
+    })
+</script>
+{/block}
+

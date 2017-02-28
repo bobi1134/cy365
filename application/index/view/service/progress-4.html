@@ -1,0 +1,64 @@
+{extend name="layout/app" /}
+
+{block name="title"}创业服务{/block}
+
+{block name="ext_css"}
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+<link href="//cdn.bootcss.com/semantic-ui/2.1.8/semantic.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/static/index/css/style.css" />
+{/block}
+
+{block name="content"}
+
+<div class="jumbotron jumbotron-custom">
+    <p class="text-info text-center jumbotron-title">创业补贴申报系统</p>
+</div>
+<div class="container service-main-content">
+    <div class="row service-container">
+        {include file="service/service-head"}
+        <div class="service-body" id="service-type">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4 col-md-offset-4">
+                        <div class="result text-center">
+                            <img src="/static/index/images/7.svg"  alt="申报完成">
+                            <div class="result-notice">
+                                <p>恭喜您，申报完成，现在就静静的等待审核吧。您可以 再 <a href="#" @click.prevent.stop="getNew()" class="text-blue">申报一个项目</a>，或者点此 <a
+                                        href="{:url('user/index/cybtList')}" class="text-blue">查看审核进度</a> ~</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{/block}
+
+{block name="ext_js"}
+<!-- 解决移动端单击300ms延迟问题 -->
+<script type='application/javascript' src='/static/index/js/fastclick.js'></script>
+
+<script>
+    $(function() {
+        FastClick.attach(document.body);
+    });
+</script>
+<script>
+    $('.menu .item').tab();
+</script>
+<script src="http://connect.qq.com/widget/loader/loader.js" widget="shareqq" charset="utf-8"></script>
+<script>
+    new Vue({
+        el:"#service-type",
+        methods:{
+            getNew:function(){
+                $.getJSON("{:url('index/service/cybtGetIdTapped')}",function(res){
+                    location.href=res.url;
+                })
+            }
+        }
+    })
+</script>
+{/block}

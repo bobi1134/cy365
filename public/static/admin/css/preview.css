@@ -1,0 +1,21 @@
+
+body{
+    position: relative;
+    background: #EEEEEE;
+}
+.preview-container{
+    margin:2em;
+    border:1px solid #ccc;
+    border-radius: 4px;
+    padding:4em 2em;
+    background: #fff;
+    z-index: 101;
+}
+.nav-bottom{
+    padding:2em 0;
+    border-radius: 0;
+    margin:0;
+}
+.row > [class*="col-"] {
+    margin-bottom:0;
+}

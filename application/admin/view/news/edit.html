@@ -1,0 +1,92 @@
+{extend name="layout/app" /}
+{block name="ext_css"}
+<link rel="stylesheet" href="/static/admin/css/layer.css">
+{/block}
+{block name="content"}
+<form id="article_form">
+    <div class="col-md-8">
+
+        <section class="panel">
+            <header class="panel-heading">
+                <h4>修改资讯</h4>
+            </header>
+            <div class="panel-body">
+                <input type="hidden" id="article_id" value="{$article.id}">
+                <div class="form-group">
+                    <label for="title">标题</label>
+                    <input type="text" class="form-control" value="{$article.title}" id="title" placeholder="请输入文章标题">
+                    <p class="help-block"></p>
+                </div>
+                <div class="form-group">
+                    <label for="editor_id">内容</label>
+                    <textarea id="editor_id" name="content" style="width: 100%;min-height: 300px;" >
+                        {$article.content}
+                    </textarea>
+                </div>
+                <div class="form-group">
+                    <button type="button" id="upload-text" class="btn btn-primary btn-block">修改资讯</button>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div class="col-md-4">
+        <section class="panel">
+            <header class="panel-heading">
+                <h4>是否置顶</h4>
+            </header>
+            <div class="panel-body">
+                <select name="is_top" id="isTop" class="form-control">
+                    <option value="0" {if condition="$article.is_top eq 0"}selected{/if}>否</option>
+                    <option value="1" {if condition="$article.is_top eq 1"}selected{/if}>是</option>
+                </select>
+            </div>
+        </section>
+    </div>
+</form>
+{/block}
+
+{block name="ext_js"}
+<script src="/static/admin/js/editor/kindeditor-all-min.js"></script>
+<script>
+    KindEditor.ready(function(K) {
+        var options = {
+            filterMode : true,
+            uploadJson : "{:url('file/upload/uploadImage')}",
+            fileManagerJson : "{:url('file/upload/uploadImage')}",
+            allowFileManager : true
+        };
+        var editor = K.create('textarea[name="content"]', options);
+        $("#upload-text").click(function(){
+            editor.sync();
+            var html = K('#editor_id').val();
+            var id = $("#article_id").val();
+            var title = $("#title").val();
+            var isTop = $("#isTop").val();
+            var data={id:id,title:title,content:html,is_top:isTop};
+            $.ajax({
+                type:"POST",
+                dataType:"json",
+                data:data,
+                url:"{:url('admin/news/update')}",
+                beforeSend:function(){
+                    layer.load();
+                },
+                success:function(res){
+                    layer.closeAll();
+                    if(res.code==1){
+                        layer.msg(res.msg,function(){
+                            location.href="{:url('admin/news/index')}"
+                        });
+                    }else{
+                        layer.alert(res.msg);
+                    }
+                },
+                error:function(){
+                    layer.alert("抱歉,系统出错了!");
+                }
+            })
+
+        })
+    });
+</script>
+{/block}

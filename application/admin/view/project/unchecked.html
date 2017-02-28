@@ -1,0 +1,97 @@
+{extend name="layout/app" /}
+{block name="ext_css"}
+<link rel="stylesheet" href="/static/admin/css/layer.css">
+<link href="//cdn.bootcss.com/sweetalert/1.1.3/sweetalert.min.css" rel="stylesheet">
+{/block}
+{block name="content"}
+<div class="col-md-12">
+    <section class="panel" id="projects">
+        <header class="panel-heading">
+            <h4>待审核项目（初审）</h4>
+        </header>
+        <project-app>
+
+
+        </project-app>
+    </section>
+</div>
+<script type="text/x-template" id="project-template">
+    <table class="ui sortable celled striped table">
+        <thead>
+        <tr>
+            <th>申报类型</th>
+            <th>项目名称</th>
+            <th>所在学院</th>
+            <th>申报人学号</th>
+            <th>审核资料</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr v-for="project in list">
+            <td>{{ project.type_text }}</td>
+            <td>{{ project.projects_name }}</td>
+            <td>{{ project.academy }}</td>
+            <td>{{ project.std_id }}</td>
+            <td>
+                <form action="{:url('admin/service/preview')}" method="post">
+                    <input type="hidden" name="id[0]" v-bind:value="project.file[0]">
+                    <input type="hidden" name="id[1]" v-bind:value="project.file[1]">
+                    <input type="hidden" name="id[2]" v-bind:value="project.file[2]">
+                    <input type="hidden" name="id[3]" v-bind:value="project.file[3]">
+                    <input type="hidden" name="id[4]" v-bind:value="project.file[4]">
+                    <input type="hidden" name="id[5]" v-bind:value="project.file[5]">
+                    <input type="hidden" name="projects_name" v-bind:value="project.projects_name">
+                    <input type="hidden" name="projects_id" v-bind:value="project.cybt_id">
+                    <button type="submit" class="btn btn-success btn-xs"><i class="fa fa-eye"></i> 点击查看</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</script>
+<div class="ui long modal">
+    <div class="image content">
+
+
+        <div class="embed-responsive embed-responsive-4by3">
+            <iframe class="embed-responsive-item" src=""></iframe>
+        </div>
+
+    </div>
+
+</div></div>
+{/block}
+{block name="ext_js"}
+
+<script src="//cdn.bootcss.com/vue/2.0.0-alpha.1/vue.min.js"></script>
+<script src="//cdn.bootcss.com/sweetalert/1.1.3/sweetalert.min.js"></script>
+<script src="//cdn.bootcss.com/jquery-json/2.3.0/jquery.json.min.js"></script>
+<script>
+
+    Vue.component('project-app',{
+        template:"#project-template",
+        data:function(){
+            return {
+                list:[],
+            }
+        },
+        props: {
+            list: Object,
+        },
+        created:function() {
+            var vm = this;
+            layer.msg("正在努力加载中...");
+            $.getJSON("{:url('admin/service/getNeedReviewList')}",function(res){
+                vm.list=res.data;
+            });
+        }
+    });
+    new Vue({
+        el:"#projects"
+
+    })
+
+</script>
+{/block}
+

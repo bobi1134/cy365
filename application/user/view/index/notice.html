@@ -1,0 +1,107 @@
+{extend name="layout/app" /}
+
+{block name="title"}最新消息 - {/block}
+
+{block name="content"}
+
+<section class="panel">
+    <div class="bio-graph-heading">
+        <h1>最新消息</h1>
+    </div>
+    <div class="panel-body" id="msg">
+        <project-app>
+
+        </project-app>
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title"></h4>
+                    </div>
+                    <div class="modal-body">
+
+
+
+                    </div>
+                    <div class="modal-footer">
+
+                        <button class="btn btn-danger" data-dismiss="modal" type="button">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script type="text/x-template" id="project-template">
+    <div class="activity terques " v-for="message in list">
+      <span>
+          <i class="icon-bullhorn"></i>
+      </span>
+        <div class="activity-desk">
+            <div class="panel col-md-12">
+                <div class="panel-body">
+                    <div class="arrow"></div>
+                    <i class="icon-time"></i>
+                    <a href="#" @click.stop.prevent="showContent(message.id)"><h4 class="pull-left">{{ message.title }} - {{ message.send_time }}</h4></a>
+                    <label class="pull-right label" v-bind:class="{'label-danger':message.read==0,'label-info':message.read==1}">{{ message.read==0?"未读":"已读" }}</label>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+{/block}
+
+{block name="ext_js"}
+<script>
+    Vue.component('project-app',{
+        template:"#project-template",
+        data:function(){
+            return {
+                list:[],
+                isRead:true
+            }
+        },
+        props: {
+            list: Object,
+        },
+        methods:{
+            showContent:function(id){
+                var vm=this;
+                $.getJSON("{:url('user/msg/getMsgById')}",{id:id}, function (res) {
+                    if(res.code==1){
+                        $("#myModal").modal('toggle')
+                        $("h4.modal-title").text(res.data.title);
+                        $(".modal-body").html(res.data.content);
+                    }else{
+                        swal({
+                            title:"",
+                            text:res.msg,
+                            type:"error"
+                        },function(){
+                            location.reload();
+                        })
+                    }
+                })
+            }
+        },
+        created:function() {
+            var vm = this;
+            $.getJSON("{:url('user/msg/getAllMsg')}", function (res) {
+
+                if(res.code==1){
+                    vm.list = res.data;
+
+                }else{
+                    alert("服务器出错啦！");
+                }
+            });
+        }
+    });
+
+  var vi = new Vue({
+      el:"#msg",
+    })
+</script>
+{/block}

@@ -1,0 +1,113 @@
+{extend name="layout/app" /}
+
+{block name="title"}创业服务{/block}
+{block name="ext_css"}
+<link href="//cdn.bootcss.com/font-awesome/4.6.0/css/font-awesome.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/static/index/css/style.css" />
+{/block}
+
+
+{block name="content"}
+<div class="jumbotron jumbotron-service">
+    <p class="text-center">创业服务中心</p>
+    <a href="#" id="service-main" class="jumbotron-btn"><i class="fa fa-angle-down fa-lg"></i></a>
+</div>
+<div class="gray-bg full-width-carousel">
+
+
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 col-ss-12">
+                <div class="box-template">
+                    <img height="45" src="/static/index/images/money.svg" onerror="this.src='/static/index/images/money.png'" alt="">
+                    <p class="box-title">创业补贴</p>
+                    <p class="box-content">运营三月以上即可申请</p>
+                    <div class="box-btn">
+                        <a href="javascript:void(0);" @click.stop.prevent="cybtGetIdTapped()">
+                            <p class="box-highlight"><b>资助 1 万元</b></p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 col-ss-12">
+                <div class="box-template">
+                    <img height="45" src="/static/index/images/wallet.svg" onerror="this.src='/static/index/images/wallet.png'" alt="">
+                    <p class="box-title">创业基金</p>
+                    <p class="box-content">鼓励支持大学生自主创业</p>
+                    <div class="box-btn">
+                        <a href="javascript:void(0);">
+                            <p class="box-highlight"><b>资助 30 万元</b></p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 col-ss-12">
+                <div class="box-template">
+                    <img height="45" src="/static/index/images/star.svg" onerror="this.src='/static/index/images/star.png'" alt="">
+                    <p class="box-title">苗子工程</p>
+                    <p class="box-content">培养青年科技后备力量</p>
+                    <div class="box-btn">
+                        <a href="javascript:void(0);">
+                            <p class="box-highlight"><b>资助 1~10 万元</b></p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 col-ss-12">
+                <div class="box-template">
+                    <img height="45" src="/static/index/images/calendar.svg" onerror="this.src='/static/index/images/calendar.png'" alt="">
+                    <p class="box-title">创业训练计划</p>
+                    <p class="box-content">老师指导，纯商业模式训练</p>
+                    <div class="box-btn">
+                        <a href="javascript:void(0);">
+                            <p class="box-highlight"><b>资助 1 万元</b></p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{/block}
+
+{block name="ext_js"}
+<!-- 解决移动端单击300ms延迟问题 -->
+<script type='application/javascript' src='/static/index/js/fastclick.js'></script>
+<script>
+    $(function() {
+        FastClick.attach(document.body);
+    });
+    new Vue({
+        el:"body",
+        methods:{
+            cybtGetIdTapped:function(){
+                $.ajax({
+                    url:"{:url('index/service/cybtGetIdTapped')}",
+                    dataType:"json",
+                    success:function(res){
+                        if(res.code===1){
+                            location.href=res.url;
+                        }else{
+                            swal({
+                                title:"",
+                                text:res.msg,
+                                type:"error",
+                                closeOnConfirm:false
+                            }, function () {
+                                location.href=res.url;
+                            });
+
+                        }
+                    }
+                });
+            }
+        }
+    })
+</script>
+{/block}

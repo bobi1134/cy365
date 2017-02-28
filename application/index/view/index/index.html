@@ -1,0 +1,53 @@
+{extend name="layout/app" /}
+
+{block name="title"}首页{/block}
+
+
+{block name="content"}
+
+{include file="index/banner-static" /}  <!--轮播图钩子-->
+
+{include file="index/box-seven" /}      <!--创业7部分钩子-->
+
+{include file="index/box-four" /}
+
+{include file="index/banner-case" /}
+
+{/block}
+
+{block name="ext_js"}
+<!-- 解决移动端单击300ms延迟问题 -->
+<script type='application/javascript' src='/static/index/js/fastclick.js'></script>
+
+<script>
+    $(function() {
+        FastClick.attach(document.body);
+    });
+    new Vue({
+        el:"body",
+        methods:{
+            cybtGetIdTapped:function(){
+                $.ajax({
+                    url:"{:url('index/service/cybtGetIdTapped')}",
+                    dataType:"json",
+                    success:function(res){
+                        if(res.code===1){
+                            location.href=res.url;
+                        }else{
+                            swal({
+                                title:"",
+                                text:res.msg,
+                                type:"error",
+                                closeOnConfirm:false
+                            }, function () {
+                                location.href=res.url;
+                            });
+
+                        }
+                    }
+                });
+            }
+        }
+    })
+</script>
+{/block}

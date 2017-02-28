@@ -1,0 +1,54 @@
+
+<div class="service-head">
+    <div class="col-md-2 hidden-xs service-progress">
+        <br/>
+    </div>
+    <div class="col-md-2 col-xs-12 service-progress {if condition="\Think\Request::instance()->param('progress') egt 1"}active{/if}">
+        <div class="progress-body">
+            {if condition="\Think\Request::instance()->param('progress') egt 1"}
+            <a href="{:url('index/service/cybtProgress',['id'=>\\Think\\Request::instance()->param('id'),'progress'=>1])}">
+                <i class="xtype-num">1</i>选择申报类型
+            </a>
+            {else /}
+                <i class="xtype-num">1</i>选择申报类型
+            {/if}
+        </div>
+    </div>
+    <div class="col-md-2 col-xs-12 service-progress {if condition="\Think\Request::instance()->param('progress') egt 2"}active{/if}">
+        <div class="progress-body">
+            {if condition="\Think\Request::instance()->param('progress') egt 2"}
+            <a href="{:url('index/service/cybtProgress',['id'=>\\Think\\Request::instance()->param('id'),'progress'=>2])}">
+                <i class="xtype-num">2</i>提交项目资料
+            </a>
+            {else /}
+                <i class="xtype-num">2</i>提交项目资料
+            {/if}
+        </div>
+    </div>
+    <div class="col-md-2 col-xs-12 service-progress {if condition="\Think\Request::instance()->param('progress') egt 3"}active{/if}">
+        <div class="progress-body">
+            {if condition="\Think\Request::instance()->param('progress') egt 3"}
+            <a href="{:url('index/service/cybtProgress',['id'=>\\Think\\Request::instance()->param('id'),'progress'=>3])}">
+                <i class="xtype-num">3</i>上传证件扫描件
+            </a>
+            {else /}
+                <i class="xtype-num">3</i>上传证件扫描件
+            {/if}
+        </div>
+    </div>
+    <div class="col-md-2 col-xs-12 service-progress {if condition="\Think\Request::instance()->param('progress') eq 4"}active{/if}">
+        <div class="progress-body">
+            {if condition="\Think\Request::instance()->param('progress') egt 4"}
+            <a href="{:url('index/service/cybtProgress',['id'=>\\Think\\Request::instance()->param('id'),'progress'=>4])}">
+                <i class="xtype-num">4</i>完成申报
+            </a>
+            {else /}
+                <i class="xtype-num">4</i>完成申报
+            {/if}
+
+        </div>
+    </div>
+    <div class="col-md-2 hidden-xs service-progress">
+        <br>
+    </div>
+</div>
